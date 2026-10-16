@@ -1,0 +1,26 @@
+{
+  "status": "verified_pickle_roundtrip",
+  "models": [
+    {
+      "model": "XGBoost",
+      "file": "xgboost_cv_checkpoint.pkl",
+      "sha256": "4dfb84768cb4d01b6e321f5a9e730079c9992d4fb2ae2bd600138daab84aa326",
+      "bytes": 18921337,
+      "fold_count": 3,
+      "mean_cv_R2": 0.6447153885406788,
+      "mean_cv_MAE": 0.9838778218009473,
+      "mean_cv_RMSE": 1.3194695775915266
+    },
+    {
+      "model": "LightGBM",
+      "file": "lightgbm_cv_checkpoint.pkl",
+      "sha256": "b9b58f21a8842b54da04701970e89e48b2f4c9e44ca9d0eacdcb375e03dd4826",
+      "bytes": 6980010,
+      "fold_count": 3,
+      "mean_cv_R2": 0.6268593544929673,
+      "mean_cv_MAE": 1.0160417471523173,
+      "mean_cv_RMSE": 1.3522543578874437
+    }
+  ],
+  "preprocessing_module_sha256": "6a7b79e4327abdb55713888da5637fdf933ddd5a7cb96680fe645d91e357da35"
+}
