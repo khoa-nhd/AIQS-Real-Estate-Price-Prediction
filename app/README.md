@@ -14,7 +14,7 @@ Thư mục này chứa code giao diện người dùng, dự kiến sử dụng 
 
 ## 2. Chạy ứng dụng
 
-Từ thư mục gốc repo:
+Từ thư mục gốc repo, trong môi trường `.venv` của project (Python 3.14):
 
 ```bash
 pip install -r app/requirements.txt
@@ -26,7 +26,7 @@ Sau đó chạy:
 streamlit run app/streamlit_app.py
 ```
 
-Nếu file khởi chạy có tên khác, cập nhật hướng dẫn này.
+`requirements.txt` gồm Streamlit và đúng các phiên bản thư viện mà mô hình được lưu cùng (numpy, pandas, scikit-learn, scipy, xgboost, lightgbm, cloudpickle). Thiếu hoặc lệch phiên bản thì ứng dụng báo "Mô hình chưa sẵn sàng" thay vì ước tính.
 
 Cấu trúc:
 
@@ -34,7 +34,16 @@ Cấu trúc:
 * `styles.css`: CSS của giao diện.
 * `core/`: phần không phụ thuộc giao diện: các trường nhập, nội dung chữ, kiểm tra dữ liệu, trạng thái và `model_interface.py`, nơi duy nhất ứng dụng gọi model.
 
-Hiện repo chưa có model đã lưu, nên ứng dụng chạy ở chế độ xem trước: con số giá là dữ liệu mẫu (trung vị giá của tập huấn luyện) và được ghi rõ là mẫu, không phải dự đoán. Bảng "Công cụ phòng thiết kế" ở cuối trang chỉ dùng để xem các trạng thái giao diện và nên bỏ khi đã có model.
+## Mô hình đang dùng
+
+Ứng dụng nạp mô hình đã khoá ở `models/candidates/final_v2_2026-10-20/house_price_ensemble.pkl` (notebook 03, C68): trung bình 0,5 XGBoost + 0,5 LightGBM, học trên `data/processed/splits_v2/train.csv`. Tệp chỉ được nạp khi mã SHA-256 khớp với `manifest.json` cùng thư mục, vì pickle có thể chạy mã khi nạp.
+
+* **Đầu vào:** 12 thông tin của căn nhà và địa chỉ. Bắt buộc: tỉnh, quận, **phường/xã**, diện tích. Tên đường và dự án là tùy chọn. `core/model_interface.py` ghép phường, đường, dự án thành chuỗi `Address` theo đúng thứ tự trong dữ liệu (`[Dự án X, ][Đường Y, ]Phường Z, Quận, Tỉnh`).
+* **Vì sao bắt buộc phường/xã:** mô hình dựa nhiều vào vị trí trong quận. Khi không có phường, đường và dự án, sai số trên tập kiểm định tăng từ 0,88 lên 1,14 tỷ đồng (notebook 03, C68).
+* **Danh sách phường, đường, dự án:** lấy từ địa chỉ gốc của các dòng trong tập huấn luyện (`core/reference.py`), theo từng quận.
+* **Kết quả hiển thị:** sai số trung bình và R² lấy từ lần đánh giá duy nhất trên tập kiểm tra (`experiments/final_selection/test_evaluation.json`). Chưa có khoảng dao động vì chưa làm bước calibration.
+
+Bảng "Công cụ phòng thiết kế" chỉ hiện khi mở trang với `?lab=1`, để xem các trạng thái giao diện (kết quả mẫu, lỗi mô phỏng, mô hình chưa sẵn sàng).
 
 ## 3. Phối hợp với nhóm model
 

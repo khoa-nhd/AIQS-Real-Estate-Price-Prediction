@@ -1,0 +1,13 @@
+{
+  "model": "XGBoost_r2_c04",
+  "fold": 3,
+  "train_MAE": 0.5692136144277209,
+  "cv_MAE": 0.9893946187841292,
+  "cv_RMSE": 1.3343993333393471,
+  "cv_R2": 0.6440817992716068,
+  "MAE_gap": 0.42018100435640826,
+  "fit_seconds": 17.412630400038324,
+  "selected_trees": 761,
+  "selection_rounds_run": 861,
+  "hit_iteration_limit": false
+}

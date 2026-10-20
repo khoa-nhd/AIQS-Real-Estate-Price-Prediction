@@ -1,0 +1,66 @@
+{
+  "status": "confirmed_pre_split_imputation",
+  "rows": 30229,
+  "evidence": "Full cleaning formula replay matches all 13 v1 columns after CSV round-trip.",
+  "provenance_limit": "Export cell names data_estate_house_VN.csv; file rename to _v1.csv is not documented.",
+  "audit": [
+    {
+      "column": "Frontage",
+      "missing_raw": 11564,
+      "missing_v1": 0,
+      "observed_values_restored": 1,
+      "observed_restored_row_ids": [
+        9588
+      ]
+    },
+    {
+      "column": "Access Road",
+      "missing_raw": 13297,
+      "missing_v1": 0,
+      "observed_values_restored": 2,
+      "observed_restored_row_ids": [
+        6055,
+        9588
+      ]
+    }
+  ],
+  "splits": [
+    {
+      "split": "train",
+      "rows": 18136,
+      "row_id_order_preserved": true
+    },
+    {
+      "split": "validation",
+      "rows": 4535,
+      "row_id_order_preserved": true
+    },
+    {
+      "split": "calibration",
+      "rows": 3023,
+      "row_id_order_preserved": true
+    },
+    {
+      "split": "test",
+      "rows": 4535,
+      "row_id_order_preserved": true
+    }
+  ],
+  "source_sha256": {
+    "data\\vietnam_housing_dataset.csv": "7ee188d69aca06349a81bac0c2d2d1503058d5aec7124edfd075154fa87d97c8",
+    "data\\_v1.csv": "3876999e5937eab0dffdf23b54dd175d241a47ffbdb83ffcb4ab80eb764ef782",
+    "data\\processed\\splits_v1\\calibration.csv": "85356f97157e2ba68e2f19582b48f19eae7c6bbff9a7412437cfe1076e95198d",
+    "data\\processed\\splits_v1\\split_manifest.csv": "9d406ee03a7bf66eb7783dfcb22b9e31d2b60c92b6c0c12213c87e3d87f7c3fa",
+    "data\\processed\\splits_v1\\test.csv": "0ed474f526560aa12b6c337a328341c89719506eefb72b3f986d0a1a4d7c0af1",
+    "data\\processed\\splits_v1\\train.csv": "047f4f8d482f98f1fb2ee397cc51fa41e45b76409cc7f1afc09042f6cbb1926d",
+    "data\\processed\\splits_v1\\validation.csv": "f864ac624a35010b627eb5ec8e223f6390f90c76eb2922773ef8707be9cd40e2"
+  },
+  "corrected_sha256": {
+    "data\\processed\\splits_v2\\calibration.csv": "49af1ca9aad03ae8ff4f1189f51f0cbdf26b7c47b35203ad6cf3821c5da058ce",
+    "data\\processed\\splits_v2\\split_manifest.csv": "9d406ee03a7bf66eb7783dfcb22b9e31d2b60c92b6c0c12213c87e3d87f7c3fa",
+    "data\\processed\\splits_v2\\test.csv": "db6ad72f64bb7f477ff5fff0506b9e27dbf382d75a760a78fb05cf79370ea481",
+    "data\\processed\\splits_v2\\train.csv": "bcbc0634c3885cb03eff317756d7d9b42b7732ea9be3c033ad52890c0dc4a0ca",
+    "data\\processed\\splits_v2\\validation.csv": "7234cb31e5c5c026c85c3bdb446f0c1d965bbb7c5c32e094bce5983072e5c94d"
+  },
+  "heldout_access": "Calibration/test used only for row identity and mechanical repair, not EDA or scoring."
+}

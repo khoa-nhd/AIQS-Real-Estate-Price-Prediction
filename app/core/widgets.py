@@ -121,7 +121,19 @@ def field(spec: Field, view: state.Page, reference: Reference, *, choices: str =
     elif spec.kind == "district":
         city = st.session_state.get(schema.BY_NAME["City"].key)
         st.selectbox(label, reference.districts.get(city, ()), index=None, key=spec.key, disabled=not city,
-                     placeholder=spec.placeholder if city else "Chọn tỉnh / thành phố trước")
+                     placeholder=spec.placeholder if city else "Chọn tỉnh / thành phố trước",
+                     on_change=state.district_changed)
+    elif spec.kind in ("ward", "street", "project"):
+        city = st.session_state.get(schema.BY_NAME["City"].key)
+        district = st.session_state.get(schema.BY_NAME["District"].key)
+        lists = {"ward": reference.wards, "street": reference.streets, "project": reference.projects}[spec.kind]
+        names = lists.get((city, district), ())
+        if spec.kind == "ward":
+            st.selectbox(label, names, index=None, key=spec.key, disabled=not district,
+                         placeholder=spec.placeholder if district else "Chọn quận / huyện trước")
+        else:  # optional: «Không rõ» first, then the names seen in this district
+            st.selectbox(label, (UNKNOWN, *names), key=spec.key, disabled=not district,
+                         help=content.ADDRESS_HELP[spec.kind])
     elif spec.kind == "decimal":
         # text, not a number field: browsers' number fields refuse "4,1", the way Vietnamese write decimals
         st.text_input(label, placeholder=spec.placeholder, key=spec.key, max_chars=12, autocomplete="off")
@@ -357,10 +369,11 @@ def reference_guard(reference: Reference) -> None:
 
 
 def lab_panel(view: state.Page) -> None:
-    """Reviewer controls. Same in every variant, and not part of the product design."""
-    with st.expander("Công cụ phòng thiết kế (không thuộc giao diện sản phẩm)", icon=":material/construction:"):
-        st.selectbox("Trạng thái giao diện để xem", list(state.LAB_STATES), key="lab_state",
-                     format_func=lambda k: state.LAB_STATES[k][0], on_change=state.apply_preset)
-        st.button("Điền căn nhà mẫu", key="lab_fill", on_click=state.fill_sample)
-        st.caption(f"Mô hình thật: {view.model_reason} Mọi con số giá trong phòng thiết kế là dữ liệu mẫu.")
+    """Reviewer controls, only with ?lab=1: they are not part of the product."""
+    if st.query_params.get("lab") == "1":
+        with st.expander("Công cụ phòng thiết kế (không thuộc giao diện sản phẩm)", icon=":material/construction:"):
+            st.selectbox("Trạng thái giao diện để xem", list(state.LAB_STATES), key="lab_state",
+                         format_func=lambda k: state.LAB_STATES[k][0], on_change=state.apply_preset)
+            st.button("Điền căn nhà mẫu", key="lab_fill", on_click=state.fill_sample)
+            st.caption(f"Trạng thái mô hình: {view.model_reason}")
     st.html('<div id="lab-ready"></div>')

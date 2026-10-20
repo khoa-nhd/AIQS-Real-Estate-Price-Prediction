@@ -1,0 +1,13 @@
+{
+  "model": "LightGBM_r2_c06",
+  "fold": 3,
+  "train_MAE": 0.6453420096406357,
+  "cv_MAE": 0.9970818926512718,
+  "cv_RMSE": 1.3514515015015514,
+  "cv_R2": 0.6349271847724354,
+  "MAE_gap": 0.3517398830106361,
+  "fit_seconds": 46.21606730000349,
+  "selected_trees": 216,
+  "selection_rounds_run": 316,
+  "hit_iteration_limit": false
+}

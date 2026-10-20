@@ -1,0 +1,13 @@
+{
+  "model": "LightGBM_v2_room_density",
+  "fold": 3,
+  "train_MAE": 0.6166402186006302,
+  "cv_MAE": 0.9967948122072195,
+  "cv_RMSE": 1.3478162507427935,
+  "cv_R2": 0.6368885519559255,
+  "MAE_gap": 0.3801545936065893,
+  "fit_seconds": 41.569664100010414,
+  "selected_trees": 637,
+  "selection_rounds_run": 737,
+  "hit_iteration_limit": false
+}

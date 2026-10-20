@@ -1,0 +1,13 @@
+{
+  "model": "LightGBM_v2_street_te_seed7",
+  "fold": 2,
+  "train_MAE": 0.6019829504121136,
+  "cv_MAE": 0.9549248365196817,
+  "cv_RMSE": 1.2857305693110652,
+  "cv_R2": 0.6565822492925607,
+  "MAE_gap": 0.35294188610756816,
+  "fit_seconds": 22.68939890002366,
+  "selected_trees": 700,
+  "selection_rounds_run": 800,
+  "hit_iteration_limit": false
+}

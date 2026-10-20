@@ -1,0 +1,13 @@
+{
+  "model": "XGBoost_city_district_onehot_seed7",
+  "fold": 3,
+  "train_MAE": 0.5308456815991801,
+  "cv_MAE": 0.9826215813263475,
+  "cv_RMSE": 1.3315791047749554,
+  "cv_R2": 0.6455846626585314,
+  "MAE_gap": 0.45177589972716736,
+  "fit_seconds": 69.43511860002764,
+  "selected_trees": 952,
+  "selection_rounds_run": 1052,
+  "hit_iteration_limit": false
+}

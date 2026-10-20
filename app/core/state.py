@@ -1,8 +1,8 @@
 """Session state and the submit flow, identical for every variant.
 
-The lab adds one thing the product will not have: a state switch, so reviewers
-can see each UI state without a model. It selects which gateway scenario runs
-and which preset fills the form.
+The app runs on the real model by default. The lab switch (shown with ?lab=1)
+keeps the design-review states: it selects which gateway scenario runs and
+which preset fills the form.
 """
 from __future__ import annotations
 
@@ -13,20 +13,21 @@ from dataclasses import dataclass, field
 import streamlit as st
 
 from . import content, formatting as fmt, schema
-from .model_interface import InferenceError, ModelUnavailable, Prediction, ProjectModelGateway, gateway_for
+from .model_interface import InferenceError, ModelUnavailable, Prediction, gateway_for
 from .reference import Reference, load_reference
 from .schema import FIELDS, UNKNOWN
 from .validation import validate
 
 # Lab state -> (label, gateway scenario, form preset)
 LAB_STATES: dict[str, tuple[str, str, dict[str, object]]] = {
-    "sample": ("Kết quả mẫu (xem trước)", "preview", schema.SAMPLE_PROPERTY),
-    "initial": ("Ban đầu", "preview", {}),
-    "invalid": ("Dữ liệu chưa hợp lệ", "preview", schema.INVALID_PROPERTY),
-    "unavailable": ("Mô hình chưa sẵn sàng", "project", schema.SAMPLE_PROPERTY),
+    "real": ("Mô hình thật (mặc định)", "project", {}),
+    "real_sample": ("Mô hình thật với căn nhà mẫu", "project", schema.SAMPLE_PROPERTY),
+    "invalid": ("Dữ liệu chưa hợp lệ", "project", schema.INVALID_PROPERTY),
+    "sample": ("Kết quả mẫu (xem trước, không chạy mô hình)", "preview", schema.SAMPLE_PROPERTY),
+    "unavailable": ("Mô hình chưa sẵn sàng (mô phỏng)", "unavailable", schema.SAMPLE_PROPERTY),
     "error": ("Lỗi khi ước tính (mô phỏng)", "error", schema.SAMPLE_PROPERTY),
 }
-DEFAULT_STATE = "sample"
+DEFAULT_STATE = "real"
 
 
 @dataclass
@@ -53,7 +54,7 @@ class Page:
 
 
 def _to_widget(spec: schema.Field, value: object) -> object:
-    if spec.kind in ("direction", "choice"):
+    if spec.kind in ("direction", "choice", "street", "project"):
         return UNKNOWN if value is None else value
     if spec.kind == "count" and value is not None:
         return int(value)
@@ -124,12 +125,13 @@ def submit() -> None:
 def apply_preset() -> None:
     """Fill the form and reach the chosen lab state. Callback of the lab switch."""
     ss = st.session_state
-    _fill(LAB_STATES[ss["lab_state"]][2])
+    preset = LAB_STATES[ss["lab_state"]][2]
+    _fill(preset)
     ss["attempted"] = False
     ss["outcome"] = Outcome("initial")
-    if ss["lab_state"] == "unavailable":
+    if not gateway_for(scenario(), load_reference()).status().available:
         ss["outcome"] = Outcome("unavailable")
-    elif ss["lab_state"] != "initial":
+    elif preset:  # an empty form waits for the person; a filled preset shows its outcome
         submit()
         ss.pop("arrived", None)  # a preset is not someone asking; it should not play the arrival
 
@@ -141,7 +143,8 @@ def reset_form() -> None:
         ss["reset_backup"] = ({spec.key: ss.get(spec.key) for spec in FIELDS}, ss.get("outcome"), ss.get("attempted", False))
     _fill({})
     ss["attempted"] = False
-    ss["outcome"] = Outcome("unavailable" if scenario() == "project" else "initial")
+    available = gateway_for(scenario(), load_reference()).status().available
+    ss["outcome"] = Outcome("initial" if available else "unavailable")
 
 
 def undo_reset() -> None:
@@ -159,8 +162,19 @@ def fill_sample() -> None:
     _fill(schema.SAMPLE_PROPERTY)
 
 
+def _clear(names: tuple[str, ...]) -> None:
+    for name in names:
+        spec = schema.BY_NAME[name]
+        st.session_state[spec.key] = _to_widget(spec, None)
+
+
 def city_changed() -> None:
-    st.session_state[schema.BY_NAME["District"].key] = None
+    """A new city: its districts, wards, streets and projects are different lists."""
+    _clear(schema.LOCATION_DETAIL)
+
+
+def district_changed() -> None:
+    _clear(schema.ADDRESS_FIELDS)
 
 
 def bootstrap() -> Reference:
@@ -181,8 +195,8 @@ def page(reference: Reference) -> Page:
     kind = outcome.kind
     if kind == "invalid" and not errors:
         kind = "fixed"
-    project_status = ProjectModelGateway().status()
-    preview = scenario() != "project"
+    model_status = gateway_for(scenario(), reference).status()
+    preview = scenario() in ("preview", "error")  # sample figures or a simulated failure, never the real model
     return Page(
         values=values,
         errors=errors,
@@ -190,9 +204,9 @@ def page(reference: Reference) -> Page:
         kind=kind,
         stale=kind in ("sample", "result", "error") and outcome.snapshot != values,
         preview=preview,
-        blocked=not preview and not project_status.available,
+        blocked=not model_status.available,
         simulated=scenario() == "error" and kind == "error",
-        model_reason=project_status.reason,
+        model_reason=model_status.reason,
     )
 
 

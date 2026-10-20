@@ -1,0 +1,13 @@
+{
+  "model": "XGBoost_v2_street_te_seed7",
+  "fold": 3,
+  "train_MAE": 0.5660692408365663,
+  "cv_MAE": 0.9591692335832405,
+  "cv_RMSE": 1.3030746702151856,
+  "cv_R2": 0.6605958327781185,
+  "MAE_gap": 0.3930999927466742,
+  "fit_seconds": 21.598461500019766,
+  "selected_trees": 850,
+  "selection_rounds_run": 950,
+  "hit_iteration_limit": false
+}

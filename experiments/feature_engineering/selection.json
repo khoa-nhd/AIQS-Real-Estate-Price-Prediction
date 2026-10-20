@@ -1,0 +1,49 @@
+{
+  "rule": "Seed 42: MAE CV giảm và thắng >= 2/3 fold so với base; sau đó MAE trung bình seed [42, 7, 2026] giảm, thắng >= 2/3 fold và >= 2/3 seed",
+  "accepted_blocks_seed_42": {
+    "XGBoost": [
+      "city_district_onehot"
+    ],
+    "LightGBM": [
+      "location_target_encoding"
+    ]
+  },
+  "stability": [
+    {
+      "model": "XGBoost_city_district_onehot",
+      "stochastic": true,
+      "control_MAE": 0.9842927025,
+      "candidate_MAE": 0.9861159112,
+      "MAE_reduction": -0.0018232088,
+      "gain_pct": -0.1852303437,
+      "folds_won": 0,
+      "seeds_won": 1,
+      "accepted": false
+    },
+    {
+      "model": "LightGBM_location_target_encoding",
+      "stochastic": false,
+      "control_MAE": 1.012006898,
+      "candidate_MAE": 1.0060629311,
+      "MAE_reduction": 0.0059439669,
+      "gain_pct": 0.5873445041,
+      "folds_won": 3,
+      "seeds_won": 3,
+      "accepted": true
+    }
+  ],
+  "selected": {
+    "XGBoost": {
+      "name": "XGBoost_base",
+      "blocks": [],
+      "group": "feature_engineering"
+    },
+    "LightGBM": {
+      "name": "LightGBM_location_target_encoding",
+      "blocks": [
+        "location_target_encoding"
+      ],
+      "group": "feature_engineering"
+    }
+  }
+}

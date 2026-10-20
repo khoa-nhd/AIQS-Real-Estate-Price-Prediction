@@ -270,11 +270,14 @@ hiện mặt tiền và đường vào đã bị điền khuyết trên toàn b�
 tỉnh/thành bị tách đôi do dấu chấm thừa; cả hai đã được sửa trước khi mô hình hóa. Phân tích trên tập train cho thấy
 vị trí giải thích 62\% phương sai của đơn giá/m\textsuperscript{2}, trong khi diện tích gần như không
 đi cùng tổng giá ($\rho = 0.19$): nhà càng rộng càng nằm ở vùng rẻ, hệ quả của việc dữ liệu chỉ giữ
-một khoảng giá. Mô hình XGBoost sau tinh chỉnh đạt MAE 0.984~\ty{} và $R^2 = 0.645$ trên 3-fold
-cross-validation, ước lượng trong sai số $\pm 20\%$ cho 67\% căn nhà, so với 52\% của quy tắc
-``đơn giá quận $\times$ diện tích'' mà người mua và môi giới hay dùng. Mô hình vẫn kéo giá về mức
-trung bình ở hai đầu phân phối và chưa được đánh giá trên tập test (mục tiêu $R^2 \geq 0.7$). Kết quả
-phù hợp làm ước lượng tham khảo ban đầu kèm cảnh báo trong ứng dụng, không thay thế thẩm định giá.
+một khoảng giá. Lấy lại phường/xã, tên đường và tên dự án từ địa chỉ gốc là cải tiến lớn nhất (MAE
+giảm khoảng 6\%). Mô hình cuối, trung bình XGBoost và LightGBM, đạt $R^2 = 0.685$ trên 3-fold
+cross-validation và $R^2 = 0.699$, MAE 0.892~\ty{} trong lần đánh giá duy nhất trên tập test, sát nhưng
+\textbf{chưa đạt} mục tiêu $R^2 \geq 0.7$. Mô hình ước lượng trong sai số $\pm 20\%$ cho 71\% căn nhà của tập
+test, so với 52\% của quy tắc ``đơn giá quận $\times$ diện tích'' mà người mua và môi giới hay dùng.
+Khoảng 11\% tin là tin đăng trùng nên điểm số hơi lạc quan; mô hình vẫn kéo giá về mức trung bình ở hai
+đầu phân phối. Kết quả phù hợp làm ước lượng tham khảo ban đầu kèm cảnh báo trong ứng dụng, không thay thế
+thẩm định giá.
 \end{abstract}
 
 \newpage
@@ -323,13 +326,17 @@ một điểm tham chiếu trước khi đi xem nhà hoặc thương lượng.
     \item \textbf{Kiểm tra và sửa dữ liệu có hệ thống:} phát hiện việc điền khuyết mặt tiền/đường vào
           bằng trung vị quận trên toàn bộ dữ liệu trước khi chia tập (nguy cơ rò rỉ và sai ngữ nghĩa),
           khôi phục giá trị gốc (\texttt{splits\_v2}) và chuẩn hóa tên địa phương (106 $\rightarrow$ 76
-          tên tỉnh/thành trên toàn bộ dữ liệu).
+          tên tỉnh/thành trên toàn bộ dữ liệu); phát hiện 11\% tin đăng trùng và 238 tin có giá nghi sai đơn vị.
+    \item \textbf{Vị trí chi tiết từ địa chỉ gốc:} tách lại phường/xã, tên đường, tên dự án đã bị bỏ khi rút
+          gọn địa chỉ; đây là thay đổi cải thiện mô hình nhiều nhất, được kiểm chứng qua 3 seed và trên các tin
+          không trùng.
     \item \textbf{Định lượng yếu tố quyết định giá:} vị trí giải thích 62\% phương sai đơn giá/m\textsuperscript{2};
           làm rõ ``nghịch lý diện tích'' do dữ liệu bị giới hạn khoảng giá; bác bỏ giả thuyết pháp lý và
           hướng nhà làm thay đổi tổng giá.
     \item \textbf{So sánh mô hình không rò rỉ:} từ baseline trung vị, hồi quy tuyến tính đến Random Forest,
           CatBoost, LightGBM, XGBoost, tất cả trên cùng các fold cố định, preprocessing học riêng trong từng
-          fold; so sánh trực tiếp với quy tắc định giá của môi giới.
+          fold; so sánh trực tiếp với quy tắc định giá của môi giới; đánh giá một lần trên test sau khi khóa
+          cấu hình và xuất mô hình thành file.
     \item \textbf{Khuyến nghị sử dụng:} quy trình dùng trong ứng dụng Streamlit, các cảnh báo bắt buộc
           (giá ngoài khoảng, quận ít dữ liệu, nhiều trường bỏ trống) và kế hoạch giám sát.
 \end{itemize}
@@ -473,7 +480,8 @@ Dữ liệu là bộ \textit{Vietnam Housing Dataset 2024} công bố trên Kagg
 mỗi dòng là một căn nhà với 11 thuộc tính mô tả và giá. Nhóm chọn bộ dữ liệu này vì có quy mô lớn, phủ
 nhiều tỉnh thành, và các thuộc tính đều là thông tin mà người dùng phổ thông tự khai báo được, đúng với
 kịch bản ứng dụng. Cột \texttt{Address} được tách thành \texttt{City} (phần cuối) và \texttt{District}
-(phần áp chót); số nhà và tên đường bị loại vì quá chi tiết và không chuẩn hóa được.
+(phần áp chót). Bản đầu tiên bỏ phần còn lại của địa chỉ; ở bước cải tiến, phường/xã, tên đường và tên dự án
+được tách lại từ \texttt{Address} gốc vì mang thông tin vị trí chi tiết hơn quận (mục V.2).
 
 \begin{table}[H]
 \centering
@@ -532,10 +540,10 @@ Bảng đầy đủ 13 biến nằm ở Phụ lục A. Có tới 91\% tin trong 
 \textbf{Vấn đề} & \textbf{Phát hiện} & \textbf{Mức độ} & \textbf{Cách xử lý} & \textbf{Lý do} \\
 \midrule
 Giá trị thiếu & 9/12 cột thiếu 12--83\%; hướng ban công thiếu 82.6\%. & Cao & Điền trong pipeline (số: mean sau chuẩn hóa; phân loại: mode), học riêng trong từng fold. & Không bỏ dòng; tránh dùng thông tin tập đánh giá. \\
-Điền khuyết trước khi chia tập & Bản \texttt{\_v1} đã điền \texttt{Frontage}/\texttt{Access Road} bằng trung vị quận trên toàn bộ 30\,229 dòng; ô còn thiếu gán 0 và 2.0. Đã tái lập đúng công thức. & Cao & Khôi phục giá trị gốc thành \texttt{splits\_v2}, giữ nguyên thành viên các tập; điền lại trong pipeline. & Chống rò rỉ; mặt tiền = 0 sai ngữ nghĩa. \\
+Điền khuyết trước khi chia tập & Bản \texttt{\_v1} đã điền \texttt{Frontage}/\texttt{Access Road} bằng trung vị quận trên toàn bộ 30\,229 dòng; ô còn thiếu gán 0 và 2.0; 3 giá trị quan sát được ở dòng thiếu quận cũng bị ghi đè. Đã tái lập đúng công thức. & Cao & Khôi phục giá trị gốc thành \texttt{splits\_v2}, giữ nguyên thành viên các tập; điền lại trong pipeline, học trong từng fold. & Chống rò rỉ; mặt tiền = 0 sai ngữ nghĩa. \\
 Tên địa phương không thống nhất & ``Hà Nội.'' và ``Hà Nội'' là hai giá trị; 509 dòng train đổi tên. & Trung bình & Chuẩn hóa NFC, khoảng trắng, dấu chấm cuối: 106 $\rightarrow$ 76 tên tỉnh/thành. & Gộp nhóm bị tách giả tạo. \\
-Trùng lặp & 0 dòng trùng toàn bộ ở dữ liệu gốc; 202 dòng (0.67\%) trùng sau khi rút gọn địa chỉ. & Thấp & Giữ nguyên. & Trùng thuộc tính không chứng minh trùng căn nhà. \\
-Giá trị bất thường & 41 tin dưới 15~\mtwo; đơn giá tới 1\,600 \trm; 131 tin có số phòng ngủ $> 3\times$ số tầng. & Thấp & Đánh dấu, không xóa. & Mô hình cây và MAE ít nhạy với ngoại lệ. \\
+Tin đăng trùng & 0 dòng trùng toàn bộ ở dữ liệu gốc, nhưng 11.1\% dòng train trùng địa chỉ, diện tích và giá với dòng khác (nhiều khả năng một căn đăng nhiều lần); 10.5\% dòng validation, 10.7\% dòng test có bản trùng trong train. & Cao & Giữ nguyên; đo riêng sai số trên dòng không trùng; đề xuất chia tập theo nhóm tin. & Bản trùng dễ đoán nên điểm hơi lạc quan; chưa xác minh được là cùng căn. \\
+Giá trị bất thường & 238 dòng train (1.3\%) có dấu hiệu: đơn giá $< 1/3$ hoặc $> 3$ lần mặt bằng quận (151), diện tích $< 15$ hoặc $> 400$~\mtwo{} (90). Có lỗi đơn vị gần như chắc chắn: nhà 3 tầng ghi 4~\mtwo, giá 6.4~\ty. & Trung bình & Đánh dấu, không xóa; cần nhóm dữ liệu xác minh nguồn. & Không xóa theo sai số mô hình; bỏ qua các dòng này $R^2$ OOF chỉ tăng 0.642 $\rightarrow$ 0.652. \\
 Lệch mẫu & Giá chỉ trong 1--11.5~\ty; 74\% tin ở HN và TP.HCM; 226/302 quận có $< 30$ tin train. & Cao & Ghi rõ phạm vi áp dụng; cảnh báo trong app. & Mô hình không có cơ sở ngoài phạm vi này. \\
 Nguy cơ rò rỉ & \texttt{row\_id}, đơn giá/m\textsuperscript{2} tính từ \texttt{Price}. & Cao & Loại khỏi đặc trưng; khóa test và calibration. & Chỉ dùng thông tin có lúc dự đoán. \\
 \bottomrule
@@ -633,11 +641,11 @@ lớn không làm giá cao hơn vì nhà diện tích lớn \textit{chỉ lọt 
 \textbf{ID} & \textbf{Phương pháp} & \textbf{Kết quả} & \textbf{Effect size} & \textbf{Kết luận} \\
 \midrule
 H1 & Kruskal--Wallis, $\eta^2$ trên đơn giá & 302 nhóm tỉnh--quận, $p < 10^{-300}$ & $\eta^2 = 0.618$ (lớn) & \textbf{Chấp nhận}: vị trí quyết định đơn giá. \\
-H2 & Spearman \texttt{Area}--\texttt{Price} & $\rho = 0.193$; giá đi ngang từ 50~\mtwo{} & Nhỏ & \textbf{Bác bỏ ở mức toàn bộ dữ liệu}; chỉ đúng khi cố định vị trí (mục VII.3). \\
+H2 & Spearman \texttt{Area}--\texttt{Price} & $\rho = 0.193$; giá đi ngang từ 50~\mtwo{} & Nhỏ & \textbf{Bác bỏ ở mức toàn bộ dữ liệu}; chỉ đúng khi cố định vị trí (mục VII.4). \\
 H3 & Mann--Whitney, có sổ vs HĐMB & Trung vị 5.85 vs 6.00~\ty; $p = 0.88$ & Cliff's $\delta = 0.004$ & \textbf{Bác bỏ} với tổng giá. \\
 H4 & Spearman & \texttt{Bathrooms} 0.46; \texttt{Floors} 0.33 & Trung bình & \textbf{Chấp nhận}. \\
 H5 & Kruskal--Wallis, 8 hướng & $p = 0.0009$; trung vị 5.05--5.60~\ty & $\eta^2 = 0.005$ & \textbf{Bác bỏ về thực tiễn}: có ý nghĩa thống kê nhưng hiệu ứng không đáng kể. \\
-H6 & Mann--Whitney, Full vs Basic & Trung vị 6.20 vs 5.00~\ty; $p < 10^{-78}$ & Cliff's $\delta = 0.233$ & \textbf{Chấp nhận yếu}; biến mất khi có các biến khác (VII.3). \\
+H6 & Mann--Whitney, Full vs Basic & Trung vị 6.20 vs 5.00~\ty; $p < 10^{-78}$ & Cliff's $\delta = 0.233$ & \textbf{Chấp nhận yếu}; biến mất khi có các biến khác (VII.4). \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -663,12 +671,19 @@ không có thống kê nào (trung bình, mode, danh mục) được học từ 
     \item \textbf{Chuẩn hóa địa danh:} Unicode NFC, gộp khoảng trắng, bỏ dấu chấm cuối cho \texttt{City},
           \texttt{District}. Trên Random Forest, MAE validation của 120 dòng đổi tên giảm từ 1.030 xuống
           0.853~\ty.
-    \item \textbf{Biến số:} chuẩn hóa (StandardScaler) rồi điền thiếu bằng trung bình. Nhóm đã so sánh trên
-          validation: mean tốt hơn median (MAE 1.0188 so với 1.0212), tốt hơn KNN với $k = 3, 5, 15$
-          (1.0237--1.0254) và thêm cờ thiếu không cải thiện (1.0236).
+    \item \textbf{Biến số:} chuẩn hóa (StandardScaler) rồi điền thiếu bằng trung bình. Ở giai đoạn khám phá
+          (\texttt{splits\_v1}, Random Forest, validation): mean tốt hơn median (MAE 1.0188 so với 1.0212), tốt hơn
+          KNN với $k = 3, 5, 15$ (1.0237--1.0254) và thêm cờ thiếu không cải thiện (1.0236).
+    \item \textbf{Mặt tiền, đường vào (thiếu 38--44\%):} trên \texttt{splits\_v2}, ba cách được so sánh bằng CV,
+          tất cả học trong từng fold: trung vị, trung vị kèm cờ thiếu, và để mô hình tự xử lý giá trị thiếu.
+          XGBoost dùng trung vị; LightGBM để tự xử lý (MAE giảm 0.47\%, giữ qua 3 seed). Không gán mặt tiền = 0
+          vì thiếu không có nghĩa là nhà trong hẻm.
     \item \textbf{Biến phân loại:} điền mode rồi One-Hot (\texttt{handle\_unknown="ignore"} để quận mới
           không làm lỗi pipeline). Gán nhãn riêng \texttt{\_\_MISSING\_\_} cho ô thiếu cho kết quả kém hơn mode
           (1.0219 so với 1.0175). Sau mã hóa có 388 cột.
+    \item \textbf{Vị trí chi tiết:} phường/xã, tên đường, tên dự án được mã hóa bằng target encoding
+          (giá trung bình có làm mượt của nhóm). Bộ mã hóa chỉ học trên phần train của fold và dùng
+          cross-fitting 5 fold bên trong, nên một dòng không bao giờ được mã hóa bằng chính giá của nó.
 \end{enumerate}
 
 \subsection{Feature Engineering theo domain}
@@ -676,35 +691,46 @@ không có thống kê nào (trung bình, mode, danh mục) được học từ 
 \begin{table}[H]
 \centering
 \small
-\caption{Các đặc trưng được tạo thêm hoặc đã thử}
-\begin{tabular}{@{}L{0.18\textwidth}L{0.25\textwidth}L{0.29\textwidth}L{0.18\textwidth}@{}}
+\caption{Các đặc trưng được tạo thêm hoặc đã thử. Mức thay đổi MAE là 3-fold CV so với cấu hình chưa có
+đặc trưng đó; mỗi đặc trưng được thử riêng và chỉ nhận khi MAE giảm, thắng ít nhất 2/3 fold, giữ được qua 3 seed và $R^2$ không giảm.}
+\begin{tabular}{@{}L{0.17\textwidth}L{0.23\textwidth}L{0.28\textwidth}L{0.22\textwidth}@{}}
 \toprule
 \textbf{Đặc trưng} & \textbf{Cách tính} & \textbf{Ý nghĩa theo domain} & \textbf{Trạng thái} \\
 \midrule
 \texttt{City}, \texttt{District} & Tách \texttt{Address} theo dấu phẩy, lấy 2 phần cuối & Đại diện đơn giá đất khu vực (H1) & Dùng \\
 Địa danh chuẩn hóa & NFC, bỏ dấu chấm, khoảng trắng & Gộp các biến thể của cùng một nơi & Dùng \\
-Cờ thiếu dữ liệu & \texttt{isna()} cho 3 biến số & ``Không khai báo'' có thể mang thông tin & Đã thử, bỏ \\
+\textbf{Phường/xã} & Phần đứng trước quận trong \texttt{Address}; target encoding theo tỉnh + quận + phường & Giá đất chênh nhiều giữa các phường trong cùng quận & \textbf{Dùng}: MAE $-4.5\%$ (XGBoost), $-5.1\%$ (LightGBM) \\
+\textbf{Tên dự án} & Phần đầu ``Dự án \ldots'' (12\% tin); target encoding theo tỉnh + dự án & Nhà dự án có mặt bằng giá riêng & \textbf{Dùng}: MAE $-0.8\%$ / $-0.9\%$ \\
+\textbf{Tên đường} & Phần đứng trước phường (86\% tin); target encoding theo tỉnh + quận + đường & Mặt đường lớn, trục thương mại & \textbf{Dùng}: thêm $-0.5\%$ / $-0.9\%$ khi đã có phường \\
+\texttt{City\_District} & Ghép tỉnh và quận (One-Hot hoặc target encoding) & Phân biệt quận trùng tên giữa các tỉnh & Đã thử, bỏ (không giữ được qua 3 seed) \\
+Diện tích $\times$ vị trí & \texttt{Area} $\times$ mức giá quận (target encoding) & Tác động của diện tích phụ thuộc vị trí & Đã thử, bỏ \\
+Diện tích $\times$ số tầng & \texttt{Area} $\times$ \texttt{Floors} & Chỉ là tích số, không phải diện tích sử dụng thực tế & Đã thử, bỏ \\
+Mật độ phòng & (\texttt{Bedrooms} + \texttt{Bathrooms}) / \texttt{Area} & Nhà xây kín, nhiều phòng & Đã thử, bỏ \\
+$\log(\texttt{Area})$ & Thay \texttt{Area} & Mô hình cây gần như không đổi khi biến đổi đơn điệu & Đã thử, bỏ (XGBoost giống hệt) \\
+Cờ thiếu dữ liệu & \texttt{isna()} cho biến số & ``Không khai báo'' có thể mang thông tin & Đã thử, bỏ \\
 Nhãn \texttt{\_\_MISSING\_\_} & Danh mục riêng cho ô trống & Như trên, cho biến phân loại & Đã thử, bỏ \\
-Đơn giá/m\textsuperscript{2} & \texttt{Price / Area} & Thước đo của môi giới & Chỉ dùng cho EDA (rò rỉ nhãn) \\
-\texttt{City\_District} & Ghép tỉnh và quận & Phân biệt quận trùng tên giữa các tỉnh & Kế hoạch \\
+Đơn giá/m\textsuperscript{2} & \texttt{Price / Area} & Thước đo của môi giới & Chỉ dùng cho EDA và rà soát (rò rỉ nhãn) \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\begin{codebox}[title={Pipeline tiền xử lý dùng chung cho các mô hình cây}, breakable]
+\begin{codebox}[title={Pipeline tiền xử lý của thành phần XGBoost trong mô hình cuối}, breakable]
 import re
 import unicodedata
 import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
+from sklearn.model_selection import KFold
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import (FunctionTransformer, OneHotEncoder,
-                                   StandardScaler)
+                                   StandardScaler, TargetEncoder)
 
-NUM = ["Area", "Frontage", "Access Road",
-       "Floors", "Bedrooms", "Bathrooms"]
+NUM = ["Area", "Floors", "Bedrooms", "Bathrooms"]
+FA = ["Frontage", "Access Road"]          # thieu 38-44%
 CAT = ["House direction", "Balcony direction", "Legal status",
        "Furniture state", "City", "District"]
+# Khoa vi tri chi tiet, ghep tu City, District va phan tach tu Address
+TE = ["City_District_Ward", "City_District_Street", "City_Project"]
 
 def normalize_location_frame(X):
     # Chuan hoa ten dia phuong: NFC, gop khoang trang, bo dau cham cuoi
@@ -718,17 +744,39 @@ def normalize_location_frame(X):
         X[col] = X[col].map(norm)
     return X
 
-# So: chuan hoa roi dien mean; phan loai: dien mode roi One-Hot
+def build_location_keys(X):
+    # Ward, Street, Project tach tu Address; thieu thi khoa cung thieu
+    X = normalize_location_frame(X)
+    loc = X["City"] + " | " + X["District"]
+    X["City_District_Ward"] = loc + " | " + X["Ward"]
+    X["City_District_Street"] = loc + " | " + X["Street"]
+    X["City_Project"] = X["City"] + " | " + X["Project"]
+    return X
+
+# So: chuan hoa roi dien mean; mat tien, duong vao: dien median;
+# phan loai: dien mode roi One-Hot; vi tri chi tiet: target encoding
 num_pipe = Pipeline([("scaler", StandardScaler()),
                      ("imputer", SimpleImputer())])
+fa_pipe = Pipeline([("scaler", StandardScaler()),
+                    ("imputer", SimpleImputer(strategy="median"))])
 cat_pipe = Pipeline([("imputer", SimpleImputer(strategy="most_frequent")),
                      ("onehot", OneHotEncoder(handle_unknown="ignore"))])
+te_pipe = Pipeline([
+    ("imputer", SimpleImputer(strategy="constant",
+                              fill_value="__MISSING__")),
+    ("encoder", TargetEncoder(target_type="continuous", smooth="auto",
+                              cv=KFold(5, shuffle=True, random_state=42))),
+])
 
 preprocessing = Pipeline([
-    ("normalize_location", FunctionTransformer(normalize_location_frame)),
+    # chuan hoa dia danh roi ghep cac khoa vi tri chi tiet
+    ("features", FunctionTransformer(build_location_keys)),
     ("columns", ColumnTransformer([("num", num_pipe, NUM),
-                                   ("cat", cat_pipe, CAT)])),
+                                   ("fa", fa_pipe, FA),
+                                   ("cat", cat_pipe, CAT),
+                                   ("target", te_pipe, TE)])),
 ])
+# Thanh phan LightGBM giong het, chi khac: khong dien FA (de mo hinh tu xu ly)
 \end{codebox}
 
 \subsection{Chia tập dữ liệu}
@@ -745,9 +793,9 @@ tương lai, nên nhóm chia ngẫu nhiên với \texttt{seed = 42} và cố đ�
 \textbf{Tập} & \textbf{Tỷ lệ} & \textbf{Số dòng} & \textbf{Vai trò} \\
 \midrule
 Train & 60\% & 18\,136 & Fit tiền xử lý và mô hình; 3-fold CV cố định để chọn mô hình, tham số \\
-Validation & 15\% & 4\,535 & So sánh nhanh ở giai đoạn khám phá, early stopping thử nghiệm \\
+Validation & 15\% & 4\,535 & So sánh nhanh ở giai đoạn khám phá; sau đó chỉ dùng để kiểm tra lại lựa chọn từ CV \\
 Calibration & 10\% & 3\,023 & Hiệu chỉnh khoảng dự đoán sau khi khóa mô hình (chưa dùng) \\
-Test & 15\% & 4\,535 & Đánh giá cuối một lần duy nhất (chưa dùng) \\
+Test & 15\% & 4\,535 & Đánh giá một lần duy nhất; đã dùng ngày 20/10/2026 cho cấu hình đã khóa \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -773,8 +821,10 @@ mới (\texttt{splits\_v2}) nhưng giữ nguyên thành viên từng tập để
 2 & ``Nghịch lý diện tích'' & Giá đi ngang 6.3~\ty{} từ 50~\mtwo; $\rho(\text{diện tích}, \text{đơn giá}) = -0.70$ & Dữ liệu chỉ giữ 1--11.5~\ty: nhà rộng chỉ lọt vào nếu ở vùng rẻ & Không đọc diện tích tách khỏi vị trí & Cao \\
 3 & Kết cấu quan trọng hơn diện tích đơn lẻ & $\rho$ WC 0.46, tầng 0.33 so với diện tích 0.19 & Nhà phố xây cao bù đất nhỏ; số tầng/WC đo diện tích sàn & Hỏi số tầng, WC; cảnh báo khi bỏ trống & Trung bình \\
 4 & Pháp lý không làm khác tổng giá & $\delta = 0.004$, $p = 0.88$ & ``Hợp đồng mua bán'' là nhà dự án vùng ven, diện tích lớn & Không coi ``có sổ'' là điểm cộng giá độc lập & Trung bình \\
-5 & Mô hình kéo giá về trung bình & Nhà $< 3$ tỷ bị đoán cao +0.97; nhà $\geq 9$ tỷ bị đoán thấp $-1.74$ & Thiếu thông tin chi tiết (vị trí trong quận, chất lượng) & Hiện khoảng giá và cảnh báo ở hai đầu & Cao \\
+5 & Mô hình kéo giá về trung bình & Nhà $< 3$ tỷ bị đoán cao +0.87; nhà $\geq 9$ tỷ bị đoán thấp $-1.64$ & Thiếu thông tin chất lượng, mặt đường; dữ liệu bị chặn 1--11.5~\ty & Hiện khoảng giá và cảnh báo ở hai đầu & Cao \\
 6 & Hướng nhà, nội thất gần như không đóng góp & Permutation importance $< 0.01$~\ty & Yếu tố phụ, lẫn với vị trí & Để là trường tùy chọn & Cao \\
+7 & Vị trí trong quận quan trọng & Thêm phường/xã: MAE $-4.5\%$, $R^2$ +0.03; thêm đường, dự án: thêm khoảng $-1\%$ & Đơn giá đất khác nhau giữa các phường, các trục đường & Hỏi phường/xã, tên đường trong app & Cao \\
+8 & Khoảng 11\% tin là tin đăng trùng & Trùng địa chỉ, diện tích, giá; dòng có bản trùng có MAE 0.69 so với 1.01 & Một căn được đăng lại nhiều lần & Đánh giá riêng trên tin không trùng; cân nhắc chia tập theo nhóm tin & Trung bình \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -785,7 +835,7 @@ mới (\texttt{splits\_v2}) nhưng giữ nguyên thành viên từng tập để
 điều này gần như không đúng: tương quan chỉ 0.19 và tổng giá đi ngang từ 50~\mtwo. Nguyên nhân là
 \textit{selection bias} do nguồn chỉ giữ tin 1--11.5~\ty: một căn 200~\mtwo{} ở nội đô Hà Nội có giá vượt xa
 11.5~\ty{} nên không có mặt trong dữ liệu; căn 200~\mtwo{} còn lại thường ở Bình Dương, Đồng Nai. Khi giữ
-vị trí cố định, diện tích lại là đặc trưng quan trọng nhất của mô hình (mục VII.3). Đây là trường hợp
+vị trí cố định, diện tích lại là đặc trưng quan trọng nhất của mô hình (mục VII.4). Đây là trường hợp
 điển hình của nghịch lý Simpson: quan hệ trong từng nhóm khác với quan hệ khi gộp các nhóm.
 
 \textbf{Pháp lý (H3) và phong thủy (H5).} Hai yếu tố được bàn nhiều khi mua nhà lại gần như không
@@ -798,24 +848,24 @@ nhà, khác biệt trung vị giữa các hướng (5.05--5.60~\ty) nhỏ hơn n
 \begin{table}[H]
 \centering
 \small
-\caption{Phân khúc theo vị trí và diện tích (tập train; sai số từ dự đoán out-of-fold của XGBoost)}
+\caption{Phân khúc theo vị trí và diện tích (tập train; sai số từ dự đoán out-of-fold của mô hình cuối)}
 \begin{tabular}{@{}L{0.30\textwidth}L{0.08\textwidth}L{0.12\textwidth}L{0.14\textwidth}L{0.10\textwidth}L{0.12\textwidth}@{}}
 \toprule
 \textbf{Phân khúc} & \textbf{n} & \textbf{Giá (tỷ)} & \textbf{Đơn giá (tr/m\textsuperscript{2})} & \textbf{MAE} & \textbf{MdAPE} \\
 \midrule
-Nhà nhỏ Hà Nội ($< 50$~\mtwo) & 4\,807 & 5.68 & 158 & 0.93 & 13.1\% \\
-Nhà phố Hà Nội (50--100~\mtwo) & 1\,453 & 7.60 & 129 & 1.20 & 12.9\% \\
-Nhà nhỏ TP.HCM ($< 50$~\mtwo) & 2\,027 & 4.60 & 130 & 0.78 & 13.1\% \\
-Nhà phố TP.HCM (50--100~\mtwo) & 4\,177 & 6.59 & 99 & 0.95 & 11.4\% \\
-Nhà lớn TP.HCM ($\geq 100$~\mtwo) & 806 & 7.70 & 62 & 1.17 & 12.4\% \\
-Tỉnh khác (50--100~\mtwo) & 2\,513 & 4.30 & 59 & 0.93 & 14.8\% \\
-Tỉnh khác ($\geq 100$~\mtwo) & 1\,926 & 5.50 & 38 & 1.19 & 17.2\% \\
+Nhà nhỏ Hà Nội ($< 50$~\mtwo) & 4\,807 & 5.68 & 158 & 0.83 & 11.5\% \\
+Nhà phố Hà Nội (50--100~\mtwo) & 1\,453 & 7.60 & 129 & 1.14 & 12.4\% \\
+Nhà nhỏ TP.HCM ($< 50$~\mtwo) & 2\,027 & 4.60 & 130 & 0.76 & 12.8\% \\
+Nhà phố TP.HCM (50--100~\mtwo) & 4\,177 & 6.59 & 99 & 0.91 & 10.7\% \\
+Nhà lớn TP.HCM ($\geq 100$~\mtwo) & 806 & 7.70 & 62 & 1.09 & 11.0\% \\
+Tỉnh khác (50--100~\mtwo) & 2\,513 & 4.30 & 59 & 0.86 & 13.4\% \\
+Tỉnh khác ($\geq 100$~\mtwo) & 1\,926 & 5.50 & 38 & 1.09 & 15.7\% \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 Có thể gọi tên bốn nhóm theo ngôn ngữ thị trường: \textit{nhà nhỏ Hà Nội} (đất nhỏ, đơn giá rất
-cao), \textit{nhà phố TP.HCM} (nhóm đông nhất, mô hình dự đoán tốt nhất, MdAPE 11.4\%), \textit{nhà đất
+cao), \textit{nhà phố TP.HCM} (nhóm đông nhất, mô hình dự đoán tốt nhất, MdAPE 10.7\%), \textit{nhà đất
 vùng ven} (diện tích lớn, đơn giá thấp, sai số tương đối cao hơn) và \textit{nhà dự án chưa có sổ}
 (545 tin, đơn giá 53~\trm). MAE tuyệt đối tăng theo giá trị căn nhà, nhưng sai số tương đối lớn nhất lại
 nằm ở các tỉnh ngoài Hà Nội và TP.HCM, nơi mỗi quận có ít tin để mô hình học.
@@ -854,15 +904,17 @@ buộc nhập vị trí và từ chối ước lượng ngoài khoảng mà dữ
 \subsection{Problem Formulation}
 
 Bài toán là hồi quy có giám sát trên dữ liệu bảng. Với mỗi căn nhà $i$ có vector đặc trưng $\mathbf{x}_i$
-gồm 12 biến (6 số, 6 phân loại), mô hình học hàm $f$ sao cho
+gồm 12 biến người dùng khai báo (6 số, 6 phân loại) cùng phường/xã, tên đường, tên dự án tách từ địa chỉ,
+mô hình học hàm $f$ sao cho
 \[
     \hat{P}_i = f(\mathbf{x}_i), \qquad
     \mathrm{MAE} = \frac{1}{n}\sum_{i=1}^{n} \left| P_i - \hat{P}_i \right| ,
 \]
 trong đó $P_i$ là giá rao (\ty). MAE là metric chọn mô hình vì cùng đơn vị với giá và người dùng hiểu ngay
 (``sai trung bình bao nhiêu tỷ''); RMSE theo dõi lỗi lớn; $R^2$ là tiêu chí nghiệm thu của dự án
-($R^2 \geq 0.7$ trên tập test). Ràng buộc: chỉ dùng thông tin người dùng khai báo được lúc dự đoán; pipeline
-phải chịu được trường bỏ trống và quận chưa từng thấy.
+($R^2 \geq 0.7$ trên tập test). Vì cấu hình tốt nhất theo MAE chưa chắc tốt nhất theo $R^2$, mọi thay đổi
+chỉ được nhận khi MAE giảm \textit{và} $R^2$ CV không giảm (mục VII.3). Ràng buộc: chỉ dùng thông tin người
+dùng khai báo được lúc dự đoán; pipeline phải chịu được trường bỏ trống và quận chưa từng thấy.
 
 \subsection{Baseline và lựa chọn mô hình}
 
@@ -933,7 +985,8 @@ LightGBM & 1.016 & 1.352 & 0.627 & 0.757 & 384 / 343 / 367 \\
 \end{table}
 
 Sau khi bỏ giá trị điền sẵn, XGBoost không giảm chất lượng (MAE 0.986 $\rightarrow$ 0.984), cho thấy
-điểm số trước đó không bị thổi phồng đáng kể bởi lỗi dữ liệu.
+điểm số trước đó không bị thổi phồng đáng kể bởi lỗi dữ liệu. Cấu hình XGBoost dưới đây được giữ nguyên cho
+mô hình cuối; mục VII.3 mô tả các thay đổi tiếp theo.
 
 \begin{codebox}[title={Cấu hình XGBoost được chọn}]
 from xgboost import XGBRegressor
@@ -958,29 +1011,88 @@ pipeline = Pipeline([("preprocessing", preprocessing), ("model", model)])
 #   3. cham MAE, RMSE, R2 tren phan assessment cua fold
 \end{codebox}
 
+\subsection{Cải tiến theo góp ý: vị trí chi tiết và ensemble}
+
+Sau góp ý của người hướng dẫn, nhóm tạm dừng grid search rộng, giữ XGBoost và LightGBM, và chỉ thử các thay đổi
+xuất phát từ một giả thuyết cụ thể. Mỗi thay đổi được so trên cùng 3 fold với cấu hình ngay trước nó và chỉ được
+nhận khi đủ bốn điều kiện: (1) MAE trung bình giảm; (2) thắng ít nhất 2/3 fold; (3) giữ được lợi thế khi đổi seed
+mô hình (seed 42, 7, 2026), vì riêng việc chạy lại XGBoost trên máy khác số luồng CPU đã làm MAE mỗi fold lệch tới
+0.004; (4) $R^2$ CV không giảm.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Tiến trình trên \texttt{splits\_v2} (3-fold CV, trung bình). Mức giảm MAE trong ngoặc là trung bình 3 seed.}
+\begin{tabular}{@{}L{0.43\textwidth}L{0.10\textwidth}L{0.10\textwidth}L{0.09\textwidth}L{0.15\textwidth}@{}}
+\toprule
+\textbf{Cấu hình} & \textbf{MAE} & \textbf{RMSE} & \textbf{$R^2$} & \textbf{Thay đổi MAE} \\
+\midrule
+XGBoost, mặt tiền/đường vào điền trung vị trong fold & 0.983 & 1.325 & 0.642 & -- \\
+\quad + phường/xã & 0.938 & 1.270 & 0.671 & $-4.5\%$ ($-4.7\%$) \\
+\quad + phường/xã + dự án & 0.930 & 1.261 & 0.676 & $-5.4\%$ ($-5.3\%$) \\
+\quad + phường/xã + dự án + đường & 0.925 & 1.256 & 0.678 & thêm $-0.5\%$ ($-0.9\%$) \\
+LightGBM tương tự (không điền mặt tiền/đường vào) & 0.926 & 1.255 & 0.679 & \\
+\textbf{Trung bình 0.5 XGBoost + 0.5 LightGBM} & \textbf{0.915} & \textbf{1.243} & \textbf{0.685} & thêm $-1.0\%$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+    \item \textbf{Vị trí chi tiết là nguồn cải thiện lớn nhất}, đúng như dự đoán rằng việc rút gọn địa chỉ đã
+          làm mất thông tin. Lợi ích của phường giữ nguyên trên các tin không có bản trùng trong phần train của
+          fold ($-4.5\%$). Lợi ích của tên đường với XGBoost chỉ còn $-0.1\%$ trên các tin không trùng, nghĩa là
+          một phần đến từ việc ``nhớ'' giá của tin đăng lại cùng con đường; LightGBM giữ được $-0.5\%$.
+    \item \textbf{Bị loại:} \texttt{City\_District} (One-Hot hoặc target encoding), diện tích $\times$ vị trí,
+          diện tích $\times$ số tầng, mật độ phòng, $\log(\texttt{Area})$, tinh chỉnh thêm tham số XGBoost
+          (\texttt{colsample\_bytree} = 0.5 tốt hơn ở seed 42 nhưng không giữ được qua 3 seed).
+    \item \textbf{Chọn theo MAE hay theo $R^2$:} trên 7 lượt tìm kiếm, chọn theo RMSE/$R^2$ chỉ khác chọn theo MAE ở 2
+          lượt grid đầu, và $R^2$ mất đi khi chọn theo MAE dưới 0.002. Dừng sớm theo RMSE thay vì MAE không thay
+          đổi kết quả.
+    \item \textbf{Log giá:} huấn luyện trên $\log(\texttt{Price})$, đổi dự đoán về giá gốc trước khi chấm. Ở một
+          bước, cách này giảm MAE của XGBoost 0.37\% nhưng luôn làm $R^2$ giảm 0.007--0.010, vì kéo dự đoán của
+          nhà đắt xuống thấp hơn. Bị loại theo điều kiện $R^2$.
+    \item \textbf{Ensemble:} trọng số XGBoost được thử từ 0 đến 1, bước 0.1, trên dự đoán out-of-fold; 0.5 cho MAE
+          thấp nhất, thắng cả 3 fold so với XGBoost đơn lẻ. Trọng số 0.4--0.6 cho kết quả gần như bằng nhau.
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\small
+\caption{Cấu hình mô hình cuối (số cây chọn bằng dừng sớm trên 15\% tập train, rồi refit trên toàn bộ train)}
+\begin{tabular}{@{}L{0.14\textwidth}L{0.39\textwidth}L{0.30\textwidth}L{0.07\textwidth}@{}}
+\toprule
+\textbf{Thành phần} & \textbf{Tham số} & \textbf{Tiền xử lý} & \textbf{Số cây} \\
+\midrule
+XGBoost (0.5) & \texttt{max\_depth}=9, \texttt{min\_child\_weight}=1, \texttt{subsample}=0.8, \texttt{colsample\_bytree}=0.7, \texttt{learning\_rate}=0.05 & Trung vị cho mặt tiền/đường vào; One-Hot; target encoding phường, đường, dự án & 1\,057 \\
+LightGBM (0.5) & \texttt{num\_leaves}=63, \texttt{min\_child\_samples}=5, \texttt{colsample\_bytree}=0.7, \texttt{learning\_rate}=0.05 & Như trên, không điền mặt tiền/đường vào & 859 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \subsection{Mô hình học được điều gì?}
 
-Nhóm đo \textit{permutation importance} trên chính phần đánh giá của từng fold: xáo trộn giá trị một đặc
-trưng, giữ nguyên các đặc trưng khác, và đo MAE tăng thêm bao nhiêu. Cách đo này tính trên dữ liệu mô
-hình chưa thấy và cho kết quả theo 12 biến gốc thay vì 388 cột One-Hot.
+Nhóm đo \textit{permutation importance} của mô hình cuối trên tập validation, phần dữ liệu không dùng để chọn
+gì ở bước cải tiến: xáo trộn giá trị một biến đầu vào, giữ nguyên các biến khác, và đo MAE tăng thêm bao nhiêu
+(trung bình 5 lần xáo trộn). Kết quả tính theo biến người dùng nhập thay vì hàng trăm cột sau mã hóa. Xáo trộn
+tỉnh hoặc quận cũng làm hỏng khóa phường/đường ghép từ chúng, nên hai biến này mang cả một phần thông tin vị trí chi tiết.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{IMG/model_importance.png}
-\caption{Permutation importance của XGBoost (\texttt{splits\_v2}, 3 fold $\times$ 3 lần xáo trộn)}
+\caption{Permutation importance của mô hình cuối trên tập validation (màu xanh: diện tích và các biến vị trí)}
 \end{figure}
 
 \begin{itemize}
-    \item \textbf{Vị trí là nhóm quan trọng nhất:} xáo trộn đồng thời tỉnh và quận làm MAE tăng 0.867~\ty,
-          gần gấp đôi sai số hiện tại. Kết quả này đồng ý với H1 và phát hiện 1.
-    \item \textbf{Diện tích đứng thứ hai về độ quan trọng riêng lẻ} (+0.707~\ty), dù tương quan đơn biến chỉ
+    \item \textbf{Vị trí là nhóm quan trọng nhất:} quận (+0.487~\ty), tỉnh (+0.480), phường/xã (+0.149), tên đường
+          (+0.038), tên dự án (+0.035). Kết quả đồng ý với H1, phát hiện 1 và phát hiện 7.
+    \item \textbf{Diện tích quan trọng nhất khi xét riêng lẻ} (+0.675~\ty), dù tương quan đơn biến chỉ
           0.19. Mô hình học được đúng cơ chế ``giá $\approx$ đơn giá khu vực $\times$ diện tích'': diện tích
           chỉ có nghĩa khi đã biết vị trí. Đây là lời giải cho nghịch lý ở mục VI.2.
-    \item \textbf{Kết cấu và hạ tầng}: số tầng (+0.196), đường vào (+0.141), phòng tắm (+0.089) xếp tiếp theo,
+    \item \textbf{Kết cấu và hạ tầng}: số tầng (+0.178), đường vào (+0.116), phòng tắm (+0.063) xếp tiếp theo,
           khớp với H4 và với thực tế nhà phố nhiều tầng, ngõ ô tô vào được có giá cao hơn.
     \item \textbf{Pháp lý, hướng nhà, nội thất, hướng ban công} đều dưới 0.01~\ty: khi đã biết vị trí và kết
           cấu, các biến này gần như không thêm thông tin. Nội thất có khác biệt đơn biến ($\delta = 0.23$)
-          nhưng khác biệt đó đã được giải thích bởi các biến khác.
+          nhưng khác biệt đó đã được giải thích bởi các biến khác. SHAP (TreeSHAP gộp theo biến) cho cùng thứ tự.
 \end{itemize}
 
 \begin{notebox}[Quay về domain]
@@ -995,86 +1107,119 @@ nội thất hầu như không làm thay đổi giá rao trong khoảng 1--11.5~
 
 \subsection{Chỉ số kỹ thuật}
 
-Mọi con số trong mục này là dự đoán \textit{out-of-fold} trên 18\,136 dòng train của \texttt{splits\_v2}:
-mỗi dòng được dự đoán bởi pipeline của fold không chứa dòng đó. Nhóm đã tái lập lại đúng MAE và $R^2$
-từng fold đã lưu trong checkpoint trước khi phân tích. XGBoost đạt MAE 0.984~\ty, RMSE 1.319~\ty,
-$R^2 = 0.645$; MAE từng fold nằm trong khoảng 0.978--0.992~\ty. Khoảng cách train/CV (0.55 so với 0.98~\ty)
-cho thấy mô hình còn overfit, nhưng early stopping đã giữ sai số trên dữ liệu chưa thấy ổn định.
+Mô hình cuối được đánh giá theo ba cách. \textit{Out-of-fold}: mỗi dòng trong 18\,136 dòng train được dự
+đoán bởi pipeline của fold không chứa dòng đó; đây là căn cứ chọn mô hình. \textit{Validation}: mô hình fit trên
+toàn bộ train, chấm trên 4\,535 dòng validation, chỉ để kiểm tra lại lựa chọn từ CV. \textit{Test}: chấm
+\textbf{một lần duy nhất} trên 4\,535 dòng test sau khi khóa cấu hình (20/10/2026); kết quả được lưu kèm mã băm
+của cấu hình để không thể chấm lại sau khi đổi mô hình.
 
-\begin{notebox}[Chưa phải kết quả nghiệm thu]
-Tập test và calibration chưa được dùng. CV score đã được dùng để chọn cấu hình nên có thể lạc quan nhẹ.
-Mục tiêu $R^2 \geq 0.7$ của dự án hiện \textbf{chưa đạt} trên CV (0.645); kết luận cuối cần một lần đánh
-giá duy nhất trên test sau khi khóa mô hình.
+\begin{table}[H]
+\centering
+\small
+\caption{Kết quả mô hình cuối (\ty)}
+\begin{tabular}{@{}L{0.48\textwidth}L{0.10\textwidth}L{0.10\textwidth}L{0.10\textwidth}@{}}
+\toprule
+\textbf{Tập đánh giá} & \textbf{MAE} & \textbf{RMSE} & \textbf{$R^2$} \\
+\midrule
+3-fold CV, out-of-fold (train) & 0.915 & 1.243 & 0.685 \\
+Validation & 0.880 & 1.210 & 0.695 \\
+\textbf{Test (một lần)} & \textbf{0.892} & \textbf{1.219} & \textbf{0.699} \\
+Test, bỏ 10.7\% dòng có tin trùng trong train & 0.934 & 1.266 & 0.677 \\
+\midrule
+Test, XGBoost đơn lẻ & 0.897 & 1.229 & 0.693 \\
+Test, LightGBM đơn lẻ & 0.905 & 1.231 & 0.693 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Ba cách đánh giá cho cùng thứ tự (ensemble tốt hơn từng mô hình đơn lẻ) và điểm test sát validation, nên quy
+trình chọn bằng CV là đáng tin. Validation và test tốt hơn CV một phần vì mô hình được fit trên toàn bộ train,
+một phần vì khoảng 10.5--10.7\% dòng có tin trùng trong train (các dòng này có MAE chỉ khoảng 0.53). Khoảng cách
+train/CV (0.58 so với 0.92~\ty{} với XGBoost) cho thấy mô hình còn overfit, nhưng dừng sớm đã giữ sai số trên dữ
+liệu chưa thấy ổn định.
+
+\begin{notebox}[Kết quả nghiệm thu]
+Mục tiêu $R^2 \geq 0.7$ trên test \textbf{chưa đạt}: $R^2 = 0.6986$, thiếu 0.0014. Trên các tin không trùng với
+train, $R^2 = 0.677$, gần với điều sẽ xảy ra với một tin đăng hoàn toàn mới. Cấu hình đã khóa; mọi cải tiến sau này
+phải được chọn bằng CV và báo cáo rõ là tập test đã được xem trước.
 \end{notebox}
 
 \subsection{Chỉ số theo domain và giá trị thực tế}
 
 Người mua không hỏi ``MAE bao nhiêu'' mà hỏi ``con số này lệch tối đa bao nhiêu phần trăm''. Bảng dưới
-dịch kết quả sang các chỉ số đó và so với hai cách làm hiện tại, tính trên cùng các fold.
+dịch kết quả sang các chỉ số đó và so với hai cách làm hiện tại. Hai mốc so sánh học từ phần train của
+từng fold (khi chấm test: từ toàn bộ train); quy tắc đơn giá dùng trung vị đơn giá của quận, quận chưa có thì
+lấy của tỉnh.
 
 \begin{table}[H]
 \centering
 \small
-\caption{Kết quả theo chỉ số domain (out-of-fold, 18\,136 căn)}
-\begin{tabular}{@{}L{0.30\textwidth}L{0.12\textwidth}L{0.18\textwidth}L{0.12\textwidth}L{0.12\textwidth}@{}}
+\caption{Kết quả theo chỉ số domain (out-of-fold trên 18\,136 căn train; cột cuối: test, 4\,535 căn)}
+\begin{tabular}{@{}L{0.23\textwidth}L{0.09\textwidth}L{0.12\textwidth}L{0.09\textwidth}L{0.09\textwidth}L{0.10\textwidth}L{0.09\textwidth}@{}}
 \toprule
-\textbf{Chỉ số domain} & \textbf{Trung vị giá} & \textbf{Đơn giá quận $\times$ diện tích} & \textbf{LightGBM} & \textbf{XGBoost} \\
+\textbf{Chỉ số domain} & \textbf{Trung vị giá} & \textbf{Đơn giá quận $\times$ diện tích} & \textbf{LightGBM} & \textbf{XGBoost} & \textbf{Ensemble} & \textbf{Ensemble (test)} \\
 \midrule
-\% căn có sai số $\leq 10\%$ & 19.0\% & 28.9\% & 37.8\% & \textbf{39.8\%} \\
-\% căn có sai số $\leq 20\%$ & 36.8\% & 52.1\% & 65.4\% & \textbf{66.9\%} \\
-Sai số tương đối trung vị (MdAPE) & 26.9\% & 19.0\% & 13.9\% & \textbf{13.3\%} \\
-\% căn lệch quá 1 tỷ & 68.3\% & 51.8\% & 40.1\% & \textbf{38.1\%} \\
-MAE (\ty) & 1.845 & 1.545 & 1.016 & \textbf{0.984} \\
+\% căn có sai số $\leq 10\%$ & 19.0\% & 28.9\% & 41.9\% & 42.5\% & \textbf{42.8\%} & 44.4\% \\
+\% căn có sai số $\leq 20\%$ & 36.8\% & 52.1\% & 69.7\% & 69.6\% & \textbf{70.3\%} & 71.1\% \\
+Sai số tương đối trung vị (MdAPE) & 26.9\% & 19.0\% & 12.3\% & 12.3\% & \textbf{12.2\%} & 11.6\% \\
+\% căn lệch quá 1 tỷ & 68.3\% & 51.7\% & 35.0\% & 34.7\% & \textbf{34.5\%} & 33.5\% \\
+MAE (\ty) & 1.845 & 1.512 & 0.926 & 0.925 & \textbf{0.915} & 0.892 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-So với quy tắc đơn giá quận $\times$ diện tích, XGBoost nâng tỷ lệ căn được ước lượng trong $\pm 20\%$ từ
-52\% lên 67\% và giảm sai số tương đối trung vị từ 19\% xuống 13\%. Với một căn 6~\ty, đó là chênh lệch
-giữa sai khoảng 1.1~\ty{} và khoảng 0.8~\ty{} ở trường hợp điển hình. Tuy vậy, cứ ba căn vẫn có một căn
-lệch hơn 20\%, nên con số chỉ nên dùng làm điểm tham chiếu.
+So với quy tắc đơn giá quận $\times$ diện tích, mô hình cuối nâng tỷ lệ căn được ước lượng trong $\pm 20\%$ từ
+52\% lên 70\% (71\% trên test) và giảm sai số tương đối trung vị từ 19\% xuống 12\%. Với một căn 6~\ty, đó là
+chênh lệch giữa sai khoảng 1.1~\ty{} và khoảng 0.7~\ty{} ở trường hợp điển hình. Tuy vậy, gần ba căn thì vẫn có
+một căn lệch hơn 20\%, nên con số chỉ nên dùng làm điểm tham chiếu.
 
 \subsection{Error Analysis}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{IMG/model_error_price.png}
-\caption{Sai lệch trung bình (trái) và MAE (phải) của XGBoost theo nhóm giá thực tế (out-of-fold)}
+\caption{Sai lệch trung bình (trái) và MAE (phải) của mô hình cuối theo nhóm giá thực tế (out-of-fold)}
 \end{figure}
 
 \begin{table}[H]
 \centering
 \small
-\caption{Sai số XGBoost theo nhóm điều kiện (out-of-fold)}
+\caption{Sai số mô hình cuối theo nhóm điều kiện (out-of-fold)}
 \begin{tabular}{@{}L{0.36\textwidth}L{0.10\textwidth}L{0.10\textwidth}L{0.12\textwidth}L{0.14\textwidth}@{}}
 \toprule
 \textbf{Nhóm} & \textbf{n} & \textbf{MAE} & \textbf{Sai lệch TB} & \textbf{MdAPE} \\
 \midrule
-Quận có $\geq 100$ tin train & 15\,336 & 0.957 & $-0.01$ & 12.7\% \\
-Quận có 30--99 tin & 1\,828 & 0.996 & $+0.02$ & 15.9\% \\
-Quận có $< 30$ tin & 972 & 1.379 & $+0.31$ & 23.8\% \\
+Quận có $\geq 100$ tin train & 15\,336 & 0.883 & $-0.01$ & 11.5\% \\
+Quận có 30--99 tin & 1\,828 & 0.963 & $+0.01$ & 14.9\% \\
+Quận có $< 30$ tin & 970 & 1.337 & $+0.23$ & 22.9\% \\
 \midrule
-Thiếu 0--2 trường tùy chọn & 6\,628 & 0.903 & $-0.02$ & 12.9\% \\
-Thiếu 3--5 trường & 8\,179 & 0.968 & $+0.01$ & 13.0\% \\
-Thiếu 6--9 trường & 3\,329 & 1.184 & $+0.07$ & 15.4\% \\
+Thiếu 0--2 trường tùy chọn & 6\,628 & 0.837 & $-0.01$ & 11.5\% \\
+Thiếu 3--5 trường & 8\,179 & 0.910 & $0.00$ & 12.1\% \\
+Thiếu 6--9 trường & 3\,329 & 1.085 & $+0.05$ & 13.8\% \\
 \midrule
-Diện tích $< 50$~\mtwo & 7\,165 & 0.892 & $+0.02$ & 13.4\% \\
-Diện tích $\geq 200$~\mtwo & 428 & 1.504 & $-0.06$ & 19.0\% \\
+Diện tích $< 50$~\mtwo & 7\,165 & 0.816 & $+0.01$ & 12.0\% \\
+Diện tích $\geq 200$~\mtwo & 428 & 1.462 & $-0.18$ & 19.2\% \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Ba nhóm lỗi chính và nguyên nhân theo domain:
+Bốn nhóm lỗi chính và nguyên nhân theo domain:
 
 \begin{enumerate}
-    \item \textbf{Kéo về trung bình ở hai đầu giá.} Căn dưới 3~\ty{} bị đoán cao trung bình 0.97~\ty, căn từ
-          9~\ty{} bị đoán thấp 1.74~\ty. Hai căn cùng quận, cùng diện tích có thể chênh giá vì mặt đường hay
-          ngõ sâu, nhà mới hay nhà cũ, những thông tin không có trong dữ liệu; mô hình vì thế dự đoán gần mức
-          trung bình của nhóm. Dự đoán chỉ trải từ 0.14 đến 10.56~\ty, hẹp hơn khoảng giá thật.
-    \item \textbf{Quận ít dữ liệu.} 972 căn ở các quận có dưới 30 tin train có MAE 1.38~\ty{} và bị đoán cao
-          (+0.31~\ty): mô hình mượn mức giá của các quận đông dữ liệu, vốn đắt hơn.
-    \item \textbf{Tin khai báo thiếu và nhà rất rộng.} Thiếu 6--9 trường làm MAE tăng 31\% so với tin khai báo
-          gần đủ; nhà từ 200~\mtwo{} có MAE 1.50~\ty{} vì ít mẫu và đơn giá biến động mạnh ở vùng ven.
+    \item \textbf{Kéo về trung bình ở hai đầu giá.} Căn dưới 3~\ty{} bị đoán cao trung bình 0.87~\ty, căn từ
+          9~\ty{} bị đoán thấp 1.64~\ty; trên test lần lượt +0.79 và $-1.66$~\ty. Hai căn cùng phường, cùng diện
+          tích có thể chênh giá vì mặt đường hay ngõ sâu, nhà mới hay nhà cũ, những thông tin không có trong dữ
+          liệu; mô hình vì thế dự đoán gần mức trung bình của nhóm. Dự đoán chỉ trải từ 0.74 đến 10.30~\ty, hẹp
+          hơn khoảng giá thật.
+    \item \textbf{Quận ít dữ liệu.} 970 căn ở các quận có dưới 30 tin train có MAE 1.34~\ty{} và bị đoán cao
+          (+0.23~\ty): mô hình mượn mức giá của các quận đông dữ liệu, vốn đắt hơn.
+    \item \textbf{Tin khai báo thiếu và nhà rất rộng.} Thiếu 6--9 trường làm MAE tăng 30\% so với tin khai báo
+          gần đủ; nhà từ 200~\mtwo{} có MAE 1.46~\ty{} vì ít mẫu và đơn giá biến động mạnh ở vùng ven.
+    \item \textbf{Dữ liệu nghi sai.} Đọc 20 mẫu sai nhiều nhất thấy cùng một căn được đăng với hai giá (3.2 và
+          9.5~\ty), giá rất thấp ở quận trung tâm (Quận 1, 3, Bình Thạnh: 2.3--3.1~\ty{} cho nhà 3--4 tầng) và một
+          lỗi diện tích gần như chắc chắn (4~\mtwo). Riêng nhóm tin có đơn giá dưới 1/3 mặt bằng quận (130 tin)
+          đã chiếm 15\% trong 200 lỗi lớn nhất; phần lớn là đất rộng ở xã ngoại thành, rẻ thật chứ không hẳn sai.
+          Nhóm không xóa các dòng này vì chưa xác minh được với nguồn.
 \end{enumerate}
 
 \subsection{Kiểm chứng với chuyên gia domain}
@@ -1091,8 +1236,15 @@ ngẫu nhiên và ghi lại căn nào họ cho là sai, sai vì lý do gì.
 \subsection{Cách sử dụng kết quả}
 
 Nhóm đã xây dựng giao diện Streamlit (\nolinkurl{app/streamlit_app.py}) cho người dùng phổ thông, toàn bộ
-tiếng Việt. Ứng dụng gọi mô hình qua một điểm duy nhất (\nolinkurl{app/core/model_interface.py}); hiện chạy ở
-chế độ xem trước vì pipeline cuối chưa được khóa và xuất file.
+tiếng Việt. Ứng dụng gọi mô hình qua một điểm duy nhất (\nolinkurl{app/core/model_interface.py}). Mô hình cuối đã
+được khóa và xuất thành file (\nolinkurl{models/candidates/final_v2_2026-10-20/house_price_ensemble.pkl}, kèm
+manifest); nạp lại trong một tiến trình Python mới cho dự đoán trùng khớp. Ứng dụng chưa nối với file này và vẫn
+chạy ở chế độ xem trước.
+
+Mô hình cần \textbf{địa chỉ chi tiết}: khi không có phường/xã và tên đường, MAE trên validation tăng lên 1.14~\ty{}
+và $R^2$ giảm còn 0.556, kém hơn cả mô hình không dùng địa chỉ chi tiết ($R^2$ CV khoảng 0.64). Giao diện hiện chỉ
+hỏi tỉnh và quận, nên trước khi phát hành cần thêm ô nhập địa chỉ, hoặc dùng một mô hình riêng khi người dùng
+không cung cấp địa chỉ.
 
 \begin{figure}[H]
 \centering
@@ -1100,9 +1252,9 @@ chế độ xem trước vì pipeline cuối chưa được khóa và xuất fil
     box/.style={draw, rounded corners=2pt, minimum height=11mm, minimum width=26mm,
                 align=center, font=\small, fill=brandblue!12},
     arr/.style={-{Stealth[length=2.2mm]}, thick}]
-    \node[box] (a) {Người dùng nhập\\12 thông tin};
+    \node[box] (a) {Người dùng nhập\\12 thông tin\\+ địa chỉ};
     \node[box, right=7mm of a] (b) {Kiểm tra đầu vào\\\& chuẩn hóa địa danh};
-    \node[box, right=7mm of b] (c) {Pipeline XGBoost\\ước lượng giá};
+    \node[box, right=7mm of b] (c) {XGBoost +\\LightGBM\\ước lượng giá};
     \node[box, right=7mm of c] (d) {Hiện giá + khoảng\\+ cảnh báo};
     \draw[arr] (a)--(b);
     \draw[arr] (b)--(c);
@@ -1111,8 +1263,8 @@ chế độ xem trước vì pipeline cuối chưa được khóa và xuất fil
 \caption{Quy trình ước lượng giá trong ứng dụng}
 \end{figure}
 
-Người dùng nhập vị trí và đặc điểm căn nhà; các trường có tỷ lệ thiếu cao trong dữ liệu (hướng nhà, hướng
-ban công, nội thất) được để tùy chọn. Kết quả luôn hiển thị là \textit{ước lượng giá rao}, kèm đơn vị
+Người dùng nhập vị trí (tỉnh, quận, phường/xã, tên đường, tên dự án nếu có) và đặc điểm căn nhà; các trường có
+tỷ lệ thiếu cao trong dữ liệu (hướng nhà, hướng ban công, nội thất) được để tùy chọn. Kết quả luôn hiển thị là \textit{ước lượng giá rao}, kèm đơn vị
 \ty{} và các cảnh báo ở bảng dưới; không gọi là giá giao dịch hay giá thị trường.
 
 \subsection{Khuyến nghị}
@@ -1125,11 +1277,13 @@ ban công, nội thất) được để tùy chọn. Kết quả luôn hiển th
 \toprule
 \textbf{Khuyến nghị} & \textbf{Căn cứ từ data} & \textbf{Người thực hiện} & \textbf{Tác động} & \textbf{Rủi ro} \\
 \midrule
-Bắt buộc nhập tỉnh và quận; gợi ý tên từ danh sách chuẩn hóa & Vị trí: importance 0.87~\ty; 26 biến thể tên tỉnh & Nhóm app & Giảm lỗi lớn nhất & Quận mới chưa có trong danh sách \\
-Cảnh báo khi quận có $< 30$ tin hoặc giá dự đoán ngoài 1--11.5~\ty & MAE 1.38 ở quận ít tin; dự đoán thấp nhất 0.14~\ty & Nhóm app & Tránh tin nhầm con số yếu & Người dùng bỏ qua cảnh báo \\
-Hiện khoảng giá thay vì một con số, hiệu chỉnh trên tập calibration & Sai lệch $+0.97$ / $-1.74$~\ty{} ở hai đầu & Nhóm model & Phản ánh đúng độ bất định & Khoảng quá rộng ở nhóm hiếm \\
-Người mua: so giá rao với khoảng ước lượng, đặc biệt nhà diện tích lớn & Nghịch lý diện tích; MdAPE 13\% & Người dùng & Có cơ sở thương lượng & Thiếu thông tin chất lượng nhà \\
-Người bán, môi giới: khai báo đủ số tầng, WC, đường vào & Thiếu 6--9 trường: MAE tăng 31\% & Người bán & Ước lượng sát hơn & Khai báo sai \\
+Bắt buộc nhập tỉnh, quận và phường/xã; khuyến khích nhập tên đường, dự án; gợi ý tên từ danh sách chuẩn hóa & Tỉnh, quận: importance $\approx 0.48$~\ty{} mỗi biến; phường giảm MAE 4.5\%; thiếu địa chỉ chi tiết: $R^2$ 0.56 & Nhóm app & Giảm lỗi lớn nhất & Người dùng không biết phường; tên đường viết nhiều kiểu \\
+Dùng mô hình riêng khi người dùng không nhập địa chỉ chi tiết & Mô hình cuối kém hơn mô hình không dùng địa chỉ khi thiếu phường/đường & Nhóm model & Tránh ước lượng sai lệch lớn & Phải bảo trì hai mô hình \\
+Cảnh báo khi quận có $< 30$ tin hoặc giá dự đoán ngoài 1--11.5~\ty & MAE 1.34 ở quận ít tin & Nhóm app & Tránh tin nhầm con số yếu & Người dùng bỏ qua cảnh báo \\
+Hiện khoảng giá thay vì một con số, hiệu chỉnh trên tập calibration, kiểm tra riêng theo nhóm giá & Sai lệch $+0.87$ / $-1.64$~\ty{} ở hai đầu & Nhóm model & Phản ánh đúng độ bất định & Khoảng quá rộng ở nhóm hiếm \\
+Xác minh 238 tin bất thường và quyết định cách xử lý tin đăng trùng trước khi đánh giá lại & Lỗi đơn vị (4~\mtwo); 11\% tin trùng làm điểm lạc quan & Nhóm dữ liệu & Điểm số trung thực hơn & $R^2$ báo cáo có thể giảm \\
+Người mua: so giá rao với khoảng ước lượng, đặc biệt nhà diện tích lớn & Nghịch lý diện tích; MdAPE 12\% & Người dùng & Có cơ sở thương lượng & Thiếu thông tin chất lượng nhà \\
+Người bán, môi giới: khai báo đủ số tầng, WC, đường vào & Thiếu 6--9 trường: MAE tăng 30\% & Người bán & Ước lượng sát hơn & Khai báo sai \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1137,8 +1291,10 @@ Người bán, môi giới: khai báo đủ số tầng, WC, đường vào & Th
 \subsection{Giám sát và cập nhật}
 
 \begin{itemize}
-    \item \textbf{Trước khi phát hành:} khóa cấu hình XGBoost, refit trên train + validation, hiệu chỉnh khoảng
-          dự đoán trên calibration, đánh giá một lần trên test (MAE, RMSE, $R^2$, độ phủ của khoảng).
+    \item \textbf{Trước khi phát hành:} cấu hình đã khóa và đã đánh giá một lần trên test ($R^2 = 0.699$). Còn lại:
+          hiệu chỉnh khoảng dự đoán trên calibration và đo độ phủ theo nhóm giá; chuyển mã tiền xử lý vào
+          \texttt{src/} để ứng dụng nạp mô hình trực tiếp; bổ sung ô nhập địa chỉ hoặc mô hình dự phòng. Nếu refit
+          trên train + validation thì không chấm lại test.
     \item \textbf{Drift dữ liệu đầu vào:} theo dõi phân bố tỉnh/quận, diện tích và tỷ lệ bỏ trống của người
           dùng so với tập train; tỷ lệ quận ``chưa từng thấy'' tăng là tín hiệu cần bổ sung dữ liệu.
     \item \textbf{Drift giá:} dữ liệu là ảnh chụp năm 2024; khi có tin rao mới, so trung vị đơn giá theo quận
@@ -1153,20 +1309,29 @@ Người bán, môi giới: khai báo đủ số tầng, WC, đường vào & Th
     \item \textbf{Giới hạn dữ liệu:} giá rao, không phải giá giao dịch; chỉ khoảng 1--11.5~\ty, nên mô hình
           không có cơ sở cho nhà rẻ hơn hoặc đắt hơn; 74\% tin ở Hà Nội và TP.HCM; một thời điểm năm 2024.
           Đơn vị của diện tích, mặt tiền, đường vào chưa được nguồn mô tả rõ.
-    \item \textbf{Thông tin thiếu:} không có tọa độ, tên đường cụ thể, năm xây dựng, loại hình (nhà dự án/thổ cư,
-          mặt phố/trong ngõ). Đây là nguyên nhân chính của hiện tượng kéo về trung bình.
-    \item \textbf{Đánh giá chưa hoàn tất:} chưa đánh giá trên test, chưa hiệu chỉnh khoảng dự đoán, $R^2$ CV 0.645
-          chưa đạt mục tiêu 0.7; chưa phỏng vấn chuyên gia domain.
-    \item \textbf{Giả định chưa kiểm chứng:} mỗi dòng là một căn nhà riêng (202 dòng trùng thuộc tính chưa xác minh);
-          mối quan hệ giữa các biến giữ nguyên khi thị trường thay đổi sau 2024.
+    \item \textbf{Thông tin thiếu:} không có tọa độ, năm xây dựng, loại hình (nhà dự án/thổ cư, mặt phố/trong ngõ);
+          phường và tên đường lấy được từ địa chỉ nhưng nhiều đường chỉ có vài tin. Đây là nguyên nhân chính của
+          hiện tượng kéo về trung bình.
+    \item \textbf{Chưa đạt nghiệm thu:} $R^2$ test 0.699, thiếu 0.0014 so với mục tiêu 0.7; trên tin không trùng
+          với train chỉ 0.677. Chưa hiệu chỉnh khoảng dự đoán; chưa phỏng vấn chuyên gia domain.
+    \item \textbf{Tin đăng trùng và dữ liệu nghi sai:} khoảng 11\% tin trùng địa chỉ, diện tích, giá; tập chia ngẫu
+          nhiên nên validation và test cũng chứa bản trùng của tin train, làm điểm lạc quan. 238 tin bất thường chưa
+          được xác minh với nguồn.
+    \item \textbf{Phụ thuộc địa chỉ chi tiết:} mô hình cuối kém đi rõ rệt khi không có phường/đường.
+    \item \textbf{Giả định chưa kiểm chứng:} mối quan hệ giữa các biến giữ nguyên khi thị trường thay đổi sau 2024.
 \end{itemize}
 
-\textbf{Hướng phát triển:}
+\textbf{Hướng phát triển} (chọn bằng CV; tập test đã được xem nên phải ghi rõ khi báo cáo):
 \begin{enumerate}
-    \item Thêm đặc trưng vị trí chi tiết hơn: \texttt{City\_District}, target encoding đơn giá theo quận có làm
-          mượt cho quận ít tin, hoặc tọa độ khi có địa chỉ đầy đủ.
-    \item Huấn luyện trên log giá hoặc dùng quantile regression để giảm kéo về trung bình và tạo khoảng dự đoán.
-    \item Ensemble XGBoost + LightGBM, phân tích SHAP cho từng ước lượng để giải thích trong ứng dụng.
+    \item Tọa độ của phường/đường (geocoding): cho mô hình biết khoảng cách và vùng lân cận, giúp cả các phường ít
+          tin; cần đồng ý gửi địa chỉ sang dịch vụ bên ngoài.
+    \item Target encoding theo tầng (đường $\rightarrow$ phường $\rightarrow$ quận $\rightarrow$ tỉnh) để khóa hiếm co về mức
+          giá của khu vực lớn hơn thay vì trung bình cả nước; thêm CatBoost vào ensemble; chuẩn hóa tên địa phương
+          còn sót (``TP. HCM'', ``quận Tân Bình'').
+    \item Chia tập theo nhóm tin đăng trùng để có điểm số trung thực cho tin mới; xác minh và sửa các lỗi dữ liệu đã
+          phát hiện.
+    \item Khoảng dự đoán bằng conformal hoặc quantile regression trên tập calibration; SHAP cho từng ước lượng để giải
+          thích trong ứng dụng.
     \item Thu thập dữ liệu mới có ngày đăng để đo biến động giá theo thời gian; kiểm chứng với môi giới.
 \end{enumerate}
 
@@ -1196,6 +1361,9 @@ Người bán, môi giới: khai báo đủ số tầng, WC, đường vào & Th
 \texttt{Furniture state} & Phân loại & -- & \texttt{Full}, \texttt{Basic} & 46.7 \\
 \texttt{City} & Phân loại & -- & Phần cuối của \texttt{Address}; 106 tên gốc & 0.0 \\
 \texttt{District} & Phân loại & -- & Phần áp chót của \texttt{Address}; 341 tên gốc & 0.0 \\
+\texttt{Ward} & Phân loại & -- & Phường/xã/thị trấn, phần đứng trước quận trong \texttt{Address} & 0.7 \\
+\texttt{Street} & Phân loại & -- & Tên đường/phố/quốc lộ, phần đứng trước phường & 14.3 \\
+\texttt{Project} & Phân loại & -- & Tên dự án khi địa chỉ bắt đầu bằng ``Dự án'' & 87.9 \\
 \texttt{row\_id} & Số nguyên & -- & Khóa truy vết dòng; không phải đặc trưng & 0.0 \\
 \bottomrule
 \end{tabular}
@@ -1205,14 +1373,22 @@ Người bán, môi giới: khai báo đủ số tầng, WC, đường vào & Th
 
 \begin{itemize}
     \item \textbf{Seed:} 42 cho chia tập, fold CV, chia trong fold để early stopping và mô hình.
-    \item \textbf{Phiên bản thư viện:} Python 3.14; numpy 2.5.3; pandas 3.0.6; scikit-learn 1.9.1; xgboost 3.4.1;
-          lightgbm 4.7.0; catboost 1.2.10; joblib 1.6.0.
+    \item \textbf{Phiên bản thư viện:} Python 3.14; numpy 2.5.3; pandas 3.0.6; scikit-learn 1.9.1; scipy 1.18.1;
+          xgboost 3.4.1; lightgbm 4.7.0; catboost 1.2.10; joblib 1.6.0; cloudpickle 3.1.2 (môi trường \texttt{.venv}
+          của repo). XGBoost lấy mẫu hàng/cột nên kết quả thay đổi nhẹ theo số luồng CPU; LightGBM và CatBoost tái lập
+          chính xác.
+    \item \textbf{Notebook:} \nolinkurl{notebooks/03_model_experiments.ipynb}, Phần B (C52--C68) chứa toàn bộ bước
+          cải tiến; các experiment lưu theo từng fold trong \nolinkurl{experiments/v2/}, chạy lại sẽ đọc kết quả đã có.
     \item \textbf{Dữ liệu:} \texttt{splits\_v2} được tạo lại từ \texttt{splits\_v1} bằng
           script \nolinkurl{src/preprocessing/repair_input_v2.py} đi kèm checkpoint (tham số
           \texttt{-{}-project-root} là thư mục repo); tập train có SHA-256 bắt đầu bằng
           \texttt{bcbc0634}, đã đối chiếu khớp với manifest của checkpoint.
-    \item \textbf{Checkpoint:} \nolinkurl{models/candidates/milestone_v2_r2_2026-10-16/} chứa 3 pipeline CV của
+    \item \textbf{Checkpoint cũ:} \nolinkurl{models/candidates/milestone_v2_r2_2026-10-16/} chứa 3 pipeline CV của
           mỗi mô hình (không phải mô hình final), kèm manifest, chỉ số từng fold và mã tiền xử lý.
+    \item \textbf{Mô hình cuối:} \nolinkurl{models/candidates/final_v2_2026-10-20/} chứa
+          \texttt{house\_price\_ensemble.pkl} (fit trên train), \texttt{manifest.json} (tham số, chỉ số, mã băm),
+          \texttt{README.md} và \texttt{requirements-model.txt}. Cấu hình chọn và kết quả test nằm ở
+          \nolinkurl{experiments/final_selection/} (\texttt{selection\_manifest.json}, \texttt{test\_evaluation.json}).
 \end{itemize}
 
 \begin{codebox}[title={Cấu trúc thư mục repo}, breakable]
@@ -1220,14 +1396,18 @@ AIQS-Real-Estate-Price-Prediction/
 |-- data/
 |   |-- vietnam_housing_dataset.csv   # du lieu goc, khong sua
 |   |-- _v1.csv                        # sau khi tach dia chi
-|   `-- processed/splits_v1/           # train/validation/calibration/test
+|   `-- processed/
+|       |-- splits_v1/                 # train/validation/calibration/test
+|       `-- splits_v2/                 # nhu v1, Frontage/Access Road goc
 |-- notebooks/
 |   |-- cleandata_estate_aiqs.ipynb    # lam sach, tach Address
 |   |-- 01_data_handoff_and_split.ipynb
 |   |-- 02_baseline_models.ipynb       # Dummy, Linear, Random Forest
-|   `-- 03_model_experiments.ipynb     # boosting, CV, grid search
-|-- experiments/                       # ket qua CV va grid search (CSV)
-|-- models/candidates/                 # checkpoint XGBoost, LightGBM
+|   `-- 03_model_experiments.ipynb     # boosting, CV, cai tien, test
+|-- experiments/                       # ket qua CV, grid, v2, final_selection
+|-- models/candidates/
+|   |-- milestone_v2_r2_2026-10-16/    # checkpoint CV cu
+|   `-- final_v2_2026-10-20/           # mo hinh cuoi (.pkl) + manifest
 |-- app/
 |   |-- streamlit_app.py               # giao dien nguoi dung
 |   `-- core/                          # schema, validation, model_interface

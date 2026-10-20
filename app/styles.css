@@ -152,8 +152,9 @@ h2.d1-k{padding:0;font-family:inherit;line-height:1.4}
 .lab-table thead th{color:$MUTED;font-size:var(--t-meta);font-weight:600;letter-spacing:.02em}
 .lab-table tbody tr:nth-child(odd){background:rgba(255,255,255,.03)}
 .lab-table th,.lab-table td{padding:.5rem .6rem}
-/* the candidate drawn in teal in the chart: the same colour in its table row */
+/* the candidate drawn in teal in the chart: the same colour in its table row (not the model-in-use table) */
 .st-key-cv_detail .lab-table tbody tr:first-child :is(th,td){color:var(--data)}
+.st-key-cv_detail .d1-model-table .lab-table tbody tr:first-child :is(th,td){color:inherit}
 /* the accuracy tab's one answer: its figure at display size, its explanation at reading measure */
 .d1-figure{font-size:var(--t-display);font-weight:700;line-height:1.05;letter-spacing:-0.03em;margin:.35rem 0 0;
   font-variant-numeric:tabular-nums}

@@ -1,0 +1,192 @@
+{
+  "file": "house_price_ensemble.pkl",
+  "sha256": "abcde93a531f507e116c4e391c7e2cfead8da5f526e040c1d4c2796f82a016c0",
+  "bytes": 15136208,
+  "format": "cloudpickle (đọc bằng pickle.load khi đã cài cloudpickle)",
+  "class": "HousePriceEnsemble — predict(DataFrame) -> numpy array, tỷ VND",
+  "input_columns": [
+    "Area",
+    "Frontage",
+    "Access Road",
+    "House direction",
+    "Balcony direction",
+    "Floors",
+    "Bedrooms",
+    "Bathrooms",
+    "Legal status",
+    "Furniture state",
+    "City",
+    "District",
+    "Address (tùy chọn)"
+  ],
+  "verified": "nạp lại trong tiến trình Python mới; dự đoán validation và test trùng khớp notebook",
+  "validation_without_detailed_address": {
+    "MAE": 1.138181811147962,
+    "RMSE": 1.4596305466158639,
+    "R2": 0.5557329380542666
+  },
+  "name": "AIQS house price ensemble (splits_v2, Phần B notebook 03)",
+  "created": "2026-10-20",
+  "source": "notebooks/03_model_experiments.ipynb, C64 (fit) và C68 (xuất)",
+  "target": "Price — tổng giá, tỷ VND",
+  "trained_on": "data/processed/splits_v2/train.csv (18.136 dòng); không dùng validation/calibration/test để fit",
+  "weights": {
+    "XGBoost": 0.5,
+    "LightGBM": 0.5
+  },
+  "components": {
+    "XGBoost": {
+      "params": {
+        "n_estimators": 3000,
+        "max_depth": 9,
+        "learning_rate": 0.05,
+        "objective": "reg:squarederror",
+        "eval_metric": "mae",
+        "tree_method": "hist",
+        "subsample": 0.8,
+        "colsample_bytree": 0.7,
+        "random_state": 42,
+        "n_jobs": -1,
+        "min_child_weight": 1
+      },
+      "preprocessing": {
+        "data": "splits_v2",
+        "blocks": [
+          "project_te",
+          "street_te",
+          "ward_te"
+        ],
+        "block_definitions": {
+          "project_te": "Target Encoding cho City_Project (dự án lấy từ Address)",
+          "street_te": "Target Encoding cho City_District_Street (đường lấy từ Address)",
+          "ward_te": "Target Encoding cho City_District_Ward (phường/xã lấy từ Address)"
+        },
+        "columns": {
+          "numeric": [
+            "Area",
+            "Floors",
+            "Bedrooms",
+            "Bathrooms"
+          ],
+          "frontage_access": [
+            "Frontage",
+            "Access Road"
+          ],
+          "one_hot": [
+            "House direction",
+            "Balcony direction",
+            "Legal status",
+            "Furniture state",
+            "City",
+            "District"
+          ],
+          "target_encoded": [
+            "City_District_Ward",
+            "City_Project",
+            "City_District_Street"
+          ],
+          "area_x_location": []
+        },
+        "numeric": "StandardScaler -> SimpleImputer(mean)",
+        "frontage_access": "StandardScaler -> SimpleImputer(median)",
+        "one_hot": "SimpleImputer(most_frequent) -> OneHotEncoder(handle_unknown=ignore)",
+        "target_encoded": "SimpleImputer(constant='__MISSING__') -> TargetEncoder(continuous, smooth=auto, KFold(5, shuffle=True, random_state=42))"
+      },
+      "n_estimators": 1057
+    },
+    "LightGBM": {
+      "params": {
+        "objective": "regression",
+        "metric": "mae",
+        "n_estimators": 3000,
+        "learning_rate": 0.05,
+        "num_leaves": 63,
+        "max_depth": -1,
+        "min_child_samples": 5,
+        "subsample": 1.0,
+        "colsample_bytree": 0.7,
+        "random_state": 42,
+        "n_jobs": -1,
+        "verbosity": -1
+      },
+      "preprocessing": {
+        "data": "splits_v2",
+        "blocks": [
+          "fa_native",
+          "project_te",
+          "street_te",
+          "ward_te"
+        ],
+        "block_definitions": {
+          "fa_native": "không điền; XGBoost/LightGBM tự học hướng rẽ cho giá trị thiếu",
+          "project_te": "Target Encoding cho City_Project (dự án lấy từ Address)",
+          "street_te": "Target Encoding cho City_District_Street (đường lấy từ Address)",
+          "ward_te": "Target Encoding cho City_District_Ward (phường/xã lấy từ Address)"
+        },
+        "columns": {
+          "numeric": [
+            "Area",
+            "Floors",
+            "Bedrooms",
+            "Bathrooms"
+          ],
+          "frontage_access": [
+            "Frontage",
+            "Access Road"
+          ],
+          "one_hot": [
+            "House direction",
+            "Balcony direction",
+            "Legal status",
+            "Furniture state",
+            "City",
+            "District"
+          ],
+          "target_encoded": [
+            "City_District_Ward",
+            "City_Project",
+            "City_District_Street"
+          ],
+          "area_x_location": []
+        },
+        "numeric": "StandardScaler -> SimpleImputer(mean)",
+        "frontage_access": "StandardScaler; giữ giá trị thiếu cho model",
+        "one_hot": "SimpleImputer(most_frequent) -> OneHotEncoder(handle_unknown=ignore)",
+        "target_encoded": "SimpleImputer(constant='__MISSING__') -> TargetEncoder(continuous, smooth=auto, KFold(5, shuffle=True, random_state=42))"
+      },
+      "n_estimators": 859
+    }
+  },
+  "metrics": {
+    "cv_3fold": {
+      "MAE": 0.9152932258674125
+    },
+    "validation": {
+      "MAE": 0.8802065291119914,
+      "RMSE": 1.209953006411587,
+      "R2": 0.6947221919925711
+    },
+    "test": {
+      "MAE": 0.8916683868309703,
+      "RMSE": 1.2187799388846823,
+      "R2": 0.6986050562104236
+    },
+    "test_without_duplicate_listings": {
+      "MAE": 0.9343126330352194,
+      "RMSE": 1.2658621089774462,
+      "R2": 0.6770990177473579
+    }
+  },
+  "acceptance_R2_test_at_least_0_7": false,
+  "selection_manifest_sha256": "8b0cec096a12d626e8e069e2496e324ee797f194777b4c5d32f5be0533e1a141",
+  "versions": {
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "scikit-learn": "1.9.1",
+    "scipy": "1.18.1",
+    "xgboost": "3.4.1",
+    "lightgbm": "4.7.0",
+    "cloudpickle": "3.1.2"
+  },
+  "prediction_interval": null
+}

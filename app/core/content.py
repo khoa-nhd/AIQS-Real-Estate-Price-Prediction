@@ -29,6 +29,15 @@ RETRY = "Thử lại"
 UNDO = "Hoàn tác xoá"  # replaces the reset button right after a reset, so one click brings everything back
 DISABLED_REASON = "Nút ước tính tạm khoá vì mô hình chưa sẵn sàng."
 RANGE_HELP = "Trong dữ liệu: {low} – {high}{unit}"  # the values the model has seen
+# Help on the optional address parts; the lists only hold names seen in the training data for that district.
+ADDRESS_HELP = {
+    "street": "Đường hoặc phố mà căn nhà nằm trên hoặc rẽ vào. Danh sách gồm các đường có trong dữ liệu của quận này.",
+    "project": "Chỉ chọn nếu căn nhà thuộc một dự án. Danh sách gồm các dự án có trong dữ liệu của quận này.",
+}
+WARD_FEW_ROWS = (
+    "Phường / xã này chỉ có {n} căn trong dữ liệu, nên mô hình chủ yếu dựa vào mức giá của quận "
+    "và kết quả có thể kém tin cậy hơn."
+)
 
 # System banners
 BANNER_PREVIEW = "Chế độ xem trước giao diện — giá trên trang này là số mẫu, không phải giá ước tính."
@@ -67,13 +76,13 @@ MARKET_LOWEST = "Ở mức giá thấp nhất có trong dữ liệu."
 MARKET_OUTSIDE = "Nằm ngoài mức giá có trong dữ liệu (từ {low} đến {high} tỷ đồng), nên không có cơ sở so sánh."
 MARKET_BIN = "{low} – {high} tỷ đồng: {n} căn"
 MARKET_AXIS = "{value} tỷ"
-# How far the estimate can be trusted, from the recorded cross-validation (the best candidate's MAE).
+# How far the estimate can be trusted, from the single evaluation on the test split (its MAE).
 # It is an average error, not an interval: the copy never puts it next to the price as "± ...".
 TRUST_LABEL = "Mô hình thường lệch bao nhiêu"
 TRUST_VALUE = "{mae} tỷ đồng"
 TRUST_TEXT = (
-    "Sai số trung bình của mô hình tốt nhất khi thử trên phần dữ liệu nó chưa được học. "
-    "Chưa phải đánh giá cuối cùng; chi tiết ở tab «Độ chính xác của mô hình»."
+    "Sai số trung bình khi thử một lần trên {n} căn mô hình chưa từng thấy. "
+    "Chi tiết ở tab «Độ chính xác của mô hình»."
 )
 TRUST_NONE = "Chưa có"
 TRUST_NONE_TEXT = "Chưa có kết quả thử mô hình."
@@ -85,6 +94,10 @@ PROVENANCE_SAMPLE = (
     "Con số này không do mô hình tính ra."
 )
 PROVENANCE_UNKNOWN = "Không có thông tin phiên bản mô hình."
+PROVENANCE_REAL = (
+    "Trung bình hai mô hình cây quyết định (XGBoost và LightGBM), khoá ngày {created}, học từ tập huấn luyện. "
+    "Khi thử một lần trên tập kiểm tra: lệch trung bình {mae} tỷ đồng, R² = {r2}."
+)
 STALE = "Thông tin đã thay đổi sau lần ước tính này. Chọn «Ước tính giá» để cập nhật."
 
 STATE_TEXT = {
@@ -93,7 +106,7 @@ STATE_TEXT = {
     "fixed": ("Chưa có kết quả", "Thông tin đã đủ. Chọn «Ước tính giá» để xem kết quả."),
     "unavailable": (
         "Mô hình chưa sẵn sàng",
-        "Hiện chưa thể ước tính vì mô hình chưa được đưa vào ứng dụng. "
+        "Hiện chưa thể ước tính vì ứng dụng không nạp được mô hình. "
         "Thông tin bạn nhập vẫn được giữ nguyên.",
     ),
     "error": (
@@ -114,20 +127,46 @@ SIMULATED_NOTE = "Lỗi mô phỏng để xem trước giao diện; không có m
 
 # Model accuracy view
 EVAL_INTRO = (
-    "Số liệu đọc trực tiếp từ tệp kết quả của nhóm. Chưa có mô hình nào được chọn để dùng trong ứng dụng."
+    "Số liệu đọc trực tiếp từ tệp kết quả của nhóm, cho mô hình đang dùng trong ứng dụng."
 )
-# The one answer this tab owes the public, built from the recorded cross-validation and the training prices.
+# The one answer this tab owes the public, built from the test evaluation and the training prices.
 ACC_TEXT = (
-    "Khi thử trên những căn nó chưa được học, mô hình tốt nhất ước tính lệch trung bình {mae} tỷ đồng "
+    "Khi thử trên {n} căn nó chưa từng thấy, mô hình ước tính lệch trung bình {mae} tỷ đồng "
     "so với giá trong dữ liệu. Với căn có giá ở giữa dữ liệu ({median} tỷ đồng), mức lệch này bằng {share} giá."
 )
-ACC_NOTE = "Đây là mức trung bình: với từng căn, giá ước tính có thể lệch nhiều hơn hoặc ít hơn."
-TEAM_DETAILS = "Chi tiết cho nhóm: so sánh {n} mô hình ứng viên"
-EVAL_NO_FINAL_LABEL = "Đánh giá cuối cùng trên tập kiểm tra"
+ACC_NOTE = (
+    "Đây là mức trung bình: với từng căn, giá ước tính có thể lệch nhiều hơn hoặc ít hơn. "
+    "Khoảng {twin} số căn thử nghiệm là tin đăng trùng với dữ liệu huấn luyện; "
+    "chỉ tính những căn còn lại, mức lệch trung bình là {mae_new} tỷ đồng."
+)
+TEAM_DETAILS = "Chi tiết cho nhóm: các lần đo của mô hình đang dùng và {n} mô hình ứng viên"
+EVAL_FINAL_LABEL = "Đánh giá cuối cùng trên tập kiểm tra"
+EVAL_FINAL_VALUE = "R² = {r2}"
+EVAL_FINAL_TEXT = (
+    "Thử một lần trên {n} căn mô hình chưa từng thấy, sau khi đã chọn xong mô hình. "
+    "Mục tiêu của dự án là R² từ 0,7 trở lên: {verdict}"
+)
+EVAL_FINAL_PASS = "đã đạt."
+EVAL_FINAL_FAIL = "chưa đạt."
 EVAL_NO_FINAL = "Chưa có"
-EVAL_NO_FINAL_TEXT = "Nhóm chưa chạy đánh giá cuối cùng, nên chưa có con số nào về độ chính xác khi dùng thật."
-EVAL_CV_HEADING = "Kết quả kiểm định chéo"
-EVAL_CV_KIND = "Dùng để chọn mô hình, chưa phải đánh giá cuối cùng."
+EVAL_NO_FINAL_TEXT = "Chưa có tệp kết quả đánh giá cuối cùng."
+EVAL_MODEL_HEADING = "Mô hình đang dùng"
+EVAL_MODEL_COLUMNS = ("Lần đo", "MAE (tỷ đồng)", "RMSE (tỷ đồng)", "R²")
+EVAL_MODEL_ROWS = {
+    "cv": "Kiểm định chéo 3 lần trên tập huấn luyện (dùng để chọn)",
+    "validation": "Tập kiểm định",
+    "test": "Tập kiểm tra (một lần)",
+    "test_new": "Tập kiểm tra, bỏ tin trùng với dữ liệu huấn luyện",
+}
+EVAL_MODEL_SOURCE = (
+    "experiments/final_selection/test_evaluation.json, "
+    "models/candidates/final_v2_2026-10-20/manifest.json, experiments/ensemble_oof/blend_summary.csv"
+)
+EVAL_CV_HEADING = "So sánh các mô hình ứng viên"
+EVAL_CV_KIND = (
+    "Kết quả kiểm định chéo ở giai đoạn chọn loại mô hình, trên dữ liệu trước khi sửa và chưa có phường, đường; "
+    "không so trực tiếp với mô hình đang dùng."
+)
 EVAL_CV_FOLDS = "Mỗi ứng viên được thử {k} lần, mỗi lần ước tính một phần của tập huấn luyện mà nó chưa được học."
 EVAL_SOURCE = "Nguồn: {path}"
 EVAL_MISSING = "Chưa có kết quả đánh giá. Khi nhóm lưu tệp kết quả, số liệu sẽ hiện ở đây."
@@ -159,7 +198,10 @@ DATA_LIMITS = (
     "Giá trong dữ liệu chưa được xác minh là giá rao bán hay giá giao dịch.",
     "Mô hình không có cơ sở để ước tính ngoài khoảng giá có trong dữ liệu.",
     "Kết quả là ước tính của mô hình, không thay cho thẩm định giá.",
-    "Danh sách tỉnh, quận trong biểu mẫu chỉ gồm nơi có đủ dữ liệu huấn luyện.",
+    "Danh sách tỉnh, quận trong biểu mẫu chỉ gồm nơi có đủ dữ liệu huấn luyện; "
+    "phường, đường và dự án chỉ gồm tên đã xuất hiện trong dữ liệu của quận đó.",
+    "Khoảng một phần mười tin trong dữ liệu là tin đăng trùng, và một số tin có giá hoặc diện tích nghi ghi sai; "
+    "nhóm giữ nguyên các tin này vì chưa xác minh được.",
 )
 DATA_MISSING_HEADING = "Thông tin thường bị thiếu trong dữ liệu"
 DATA_MISSING_COLUMNS = ("Thông tin", "Tỷ lệ thiếu")

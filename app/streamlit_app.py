@@ -18,7 +18,7 @@ sys.path.insert(0, str(HERE))  # so `core` imports however Streamlit is started
 import streamlit as st  # noqa: E402
 
 from core import content, formatting as fmt, schema, state, widgets as ui  # noqa: E402
-from core.evaluation import load_cross_validation  # noqa: E402
+from core.evaluation import load_cross_validation, load_final_evaluation  # noqa: E402
 
 TOKENS = dict(
     GUTTER="#030208", GROUND="#0C0E1D", PANEL_TOP="#151329", PANEL_BOTTOM="#0A121F",
@@ -42,7 +42,8 @@ THEME = {
 }
 
 CSS = Template((HERE / "styles.css").read_text(encoding="utf-8")).substitute(TOKENS)
-LAYOUT = {"location": 2, "size": 3, "structure": 3, "extra": [[1, 1], [1], [1]]}
+# location: city | district, ward | street, project
+LAYOUT = {"location": [[1, 1], [1, 1], [1]], "size": 3, "structure": 3, "extra": [[1, 1], [1], [1]]}
 
 
 def ring(view: state.Page) -> str:
@@ -68,7 +69,8 @@ def bands(values: dict) -> str:
     def value(name: str) -> str:
         return dict(state.recap(values))[schema.BY_NAME[name].label]
 
-    location = ", ".join(v for v in (values.get("District"), values.get("City")) if v) or schema.UNKNOWN
+    location = ", ".join(str(v) for v in (values.get("Street"), values.get("Ward"), values.get("District"),
+                                          values.get("City")) if v) or schema.UNKNOWN
     # whole words, not listing shorthand (PN, PT); counts the person left unknown are simply not listed
     # each count stays whole ("2\u00a0phòng\u00a0ngủ"); the line may break only between them, at " · "
     structure = " · ".join(f"{fmt.count(int(values[n]))}\u00a0{label}".replace(" ", "\u00a0") for n, label in
@@ -172,15 +174,15 @@ def result_panel(view: state.Page, reference) -> None:
 
 
 def trust() -> str:
-    """The recorded average error of the best cross-validated candidate, read from the team's results file."""
-    cv = load_cross_validation()
-    if cv.status != "available" or cv.summary is None or cv.summary.empty:
+    """The model's average error on the test split, read from the team's results file."""
+    final = load_final_evaluation()
+    if final.status != "available":
         return (f'<div><p class="d1-k">{ui.e(content.TRUST_LABEL)}</p><p class="d1-fact-v d1-absent">{ui.e(content.TRUST_NONE)}</p>'
                 f'<p class="d1-small">{ui.e(content.TRUST_NONE_TEXT)}</p></div>')
-    mae = float(cv.summary["mean_cv_MAE"].min())
+    mae = final.test["MAE"]
     return (f'<div><p class="d1-k">{ui.e(content.TRUST_LABEL)}</p>'
             f'<p class="d1-fact-v">{ui.e(content.TRUST_VALUE.format(mae=fmt.number(mae, 2, trim=False)))}</p>'
-            f'<p class="d1-small">{ui.e(content.TRUST_TEXT)}</p></div>')
+            f'<p class="d1-small">{ui.e(content.TRUST_TEXT.format(n=fmt.count(final.test_rows)))}</p></div>')
 
 
 def page_head(title: str, lead: str) -> None:
@@ -217,32 +219,51 @@ def valuation(view: state.Page, reference) -> None:
 
 
 def evaluation(reference) -> None:
-    """For the public: how far off the estimates run, and whether that is final. For the team (behind a
-    disclosure): the candidate comparison, its metrics and the source file."""
+    """For the public: how far off the estimates run, and the final test result. For the team (behind a
+    disclosure): every measurement of the model in use, the candidate comparison and the source files."""
+    final = load_final_evaluation()
     cv = load_cross_validation()
     copy = ui.eval_copy(cv)
     page_head(content.NAV[1], content.EVAL_INTRO)
     answer, status = st.columns([2.1, 2], gap="small")
     with status:
         with st.container(key="panel_final"):
-            st.html(f'<p class="d1-k">{ui.e(content.EVAL_NO_FINAL_LABEL)}</p><p class="d1-ring-n d1-absent">{ui.e(content.EVAL_NO_FINAL)}</p>'
-                    f'<p class="d1-small">{ui.e(content.EVAL_NO_FINAL_TEXT)}</p>')
+            if final.status == "available":
+                verdict = content.EVAL_FINAL_PASS if final.passed else content.EVAL_FINAL_FAIL
+                st.html(f'<p class="d1-k">{ui.e(content.EVAL_FINAL_LABEL)}</p>'
+                        f'<p class="d1-ring-n">{ui.e(content.EVAL_FINAL_VALUE.format(r2=fmt.number(final.test["R2"], 3, trim=False)))}</p>'
+                        f'<p class="d1-small">{ui.e(content.EVAL_FINAL_TEXT.format(n=fmt.count(final.test_rows), verdict=verdict))}</p>')
+            else:
+                st.html(f'<p class="d1-k">{ui.e(content.EVAL_FINAL_LABEL)}</p><p class="d1-ring-n d1-absent">{ui.e(content.EVAL_NO_FINAL)}</p>'
+                        f'<p class="d1-small">{ui.e(final.problem or content.EVAL_NO_FINAL_TEXT)}</p>')
     with answer:
         with st.container(key="panel_answer"):
-            if cv.status != "available" or cv.summary is None or cv.summary.empty:
+            if final.status != "available":
                 st.html(f'<p class="d1-k">{ui.e(content.TRUST_LABEL)}</p><p class="d1-figure d1-absent">{ui.e(content.TRUST_NONE)}</p>'
-                        f'<p class="d1-p">{ui.e(cv.problem or content.EVAL_MISSING)}</p>')
-                return
-            mae, median = float(cv.summary["mean_cv_MAE"].min()), reference.price["median"]
-            mae_text = fmt.number(mae, 2, trim=False)
-            st.html(f'<p class="d1-k">{ui.e(content.TRUST_LABEL)}</p>'
-                    f'<p class="d1-figure">{ui.e(content.TRUST_VALUE.format(mae=mae_text))}</p>'
-                    f'<p class="d1-p d1-measure">{ui.e(content.ACC_TEXT.format(mae=mae_text, median=fmt.price(median), share=fmt.percent(mae / median)))}</p>'
-                    f'<p class="d1-small">{ui.e(content.ACC_NOTE)}</p>')
-    # the course's model comparison stays complete, one click away
+                        f'<p class="d1-p">{ui.e(final.problem or content.EVAL_MISSING)}</p>')
+            else:
+                mae, median = final.test["MAE"], reference.price["median"]
+                mae_text = fmt.number(mae, 2, trim=False)
+                note = content.ACC_NOTE.format(twin=fmt.percent(final.twin_share),
+                                               mae_new=fmt.number(final.test_new.get("MAE", mae), 2, trim=False))
+                st.html(f'<p class="d1-k">{ui.e(content.TRUST_LABEL)}</p>'
+                        f'<p class="d1-figure">{ui.e(content.TRUST_VALUE.format(mae=mae_text))}</p>'
+                        f'<p class="d1-p d1-measure">{ui.e(content.ACC_TEXT.format(n=fmt.count(final.test_rows), mae=mae_text, median=fmt.price(median), share=fmt.percent(mae / median)))}</p>'
+                        f'<p class="d1-small">{ui.e(note)}</p>')
+    if cv.status != "available" or cv.summary is None or cv.summary.empty:
+        return
+    # every measurement of the model in use, then the course's candidate comparison, one click away
     with st.expander(content.TEAM_DETAILS.format(n=len(cv.summary)), icon=":material/table_chart:"):
         with st.container(key="cv_detail"):  # not a panel: the expander is already the container
-            st.html(f'<h2 class="d1-h2" style="margin-top:0">{ui.e(content.EVAL_CV_HEADING)}</h2>'
+            if final.status == "available":
+                rows = [[content.EVAL_MODEL_ROWS[k], fmt.number(m["MAE"], 3, False), fmt.number(m["RMSE"], 3, False),
+                         fmt.number(m["R2"], 3, False)]
+                        for k, m in (("cv", final.cv), ("validation", final.validation), ("test", final.test),
+                                     ("test_new", final.test_new)) if m]
+                st.html(f'<h2 class="d1-h2" style="margin-top:0">{ui.e(content.EVAL_MODEL_HEADING)}</h2>'
+                        + '<div class="d1-model-table">' + ui.table(content.EVAL_MODEL_COLUMNS, rows) + "</div>"
+                        + f'<p class="d1-small">{ui.e(content.EVAL_SOURCE.format(path=content.EVAL_MODEL_SOURCE))}</p>')
+            st.html(f'<h2 class="d1-h2">{ui.e(content.EVAL_CV_HEADING)}</h2>'
                     f'<p class="d1-small">{ui.e(content.EVAL_CV_KIND)} {ui.e(copy["folds"])}</p>')
             # teal marks the lowest-error candidate in the chart and its row in the table
             st.altair_chart(ui.cv_chart(cv, bar=TOKENS["BORDER"], highlight=TOKENS["TEAL"], text=TOKENS["TEXT"],

@@ -1,0 +1,13 @@
+{
+  "model": "LightGBM_v2_ward_te",
+  "fold": 2,
+  "train_MAE": 0.5555848524769363,
+  "cv_MAE": 0.9385641744219343,
+  "cv_RMSE": 1.2644146020223324,
+  "cv_R2": 0.6678748181944201,
+  "MAE_gap": 0.38297932194499795,
+  "fit_seconds": 60.55914749996737,
+  "selected_trees": 1069,
+  "selection_rounds_run": 1169,
+  "hit_iteration_limit": false
+}

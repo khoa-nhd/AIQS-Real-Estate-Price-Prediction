@@ -1,7 +1,9 @@
 """The property schema: the fields the form asks for and the model receives.
 
-The 12 fields are the model's features from the notebooks (01, cell C02). Field
-names are the dataset column names and are sent to the model unchanged.
+The 12 dataset fields are the model's features from the notebooks (01, cell C02);
+their names are the dataset column names and are sent to the model unchanged.
+Ward, Street and Project are the parts of the full address the final model also
+uses (notebook 03, C53): model_interface joins them into an "Address" string.
 """
 from __future__ import annotations
 
@@ -16,21 +18,25 @@ class Field:
     key: str  # widget and session-state key
     label: str
     group: str
-    kind: str  # city | district | decimal | count | direction | choice
+    kind: str  # city | district | ward | street | project | decimal | count | direction | choice
     required: bool = False
     unit: str = ""
     placeholder: str = ""
 
 
-# Required set is provisional (design brief OD-2): the five features that have
-# no missing values in the training split. The team's model contract decides.
-# Units are provisional too (OD-1): the repository does not document them.
+# Required set follows the final model (notebook 03, Phần B): it needs the location
+# down to the ward and the area. Frontage and Access Road are optional: about 40% of
+# training rows lack them and the model learned to handle a missing value.
+# Units are provisional (OD-1): the repository does not document them.
 FIELDS: tuple[Field, ...] = (
     Field("City", "f_city", "Tỉnh / Thành phố", "location", "city", True, placeholder="Chọn tỉnh / thành phố"),
     Field("District", "f_district", "Quận / Huyện", "location", "district", True, placeholder="Chọn quận / huyện"),
+    Field("Ward", "f_ward", "Phường / Xã", "location", "ward", True, placeholder="Chọn phường / xã"),
+    Field("Street", "f_street", "Đường", "location", "street"),
+    Field("Project", "f_project", "Dự án", "location", "project"),
     Field("Area", "f_area", "Diện tích", "size", "decimal", True, "m²", "Ví dụ: 54"),
-    Field("Frontage", "f_frontage", "Mặt tiền", "size", "decimal", True, "m", "Ví dụ: 4,1"),
-    Field("Access Road", "f_access", "Đường vào", "size", "decimal", True, "m", "Ví dụ: 3,5"),
+    Field("Frontage", "f_frontage", "Mặt tiền", "size", "decimal", False, "m", "Ví dụ: 4,1"),
+    Field("Access Road", "f_access", "Đường vào", "size", "decimal", False, "m", "Ví dụ: 3,5"),
     Field("Floors", "f_floors", "Số tầng", "structure", "count", placeholder="Ví dụ: 2"),
     Field("Bedrooms", "f_bedrooms", "Số phòng ngủ", "structure", "count", placeholder="Ví dụ: 2"),
     Field("Bathrooms", "f_bathrooms", "Số phòng tắm", "structure", "count", placeholder="Ví dụ: 3"),
@@ -41,6 +47,11 @@ FIELDS: tuple[Field, ...] = (
 )
 
 BY_NAME = {f.name: f for f in FIELDS}
+
+# The address parts the form asks for; model_interface turns them into "Address".
+ADDRESS_FIELDS = ("Ward", "Street", "Project")
+# Fields that depend on the chosen city and district.
+LOCATION_DETAIL = ("District", *ADDRESS_FIELDS)
 
 GROUPS: dict[str, str] = {
     "location": "Vị trí",
@@ -60,6 +71,9 @@ CHOICE_LABELS: dict[str, dict[str, str]] = {
 SAMPLE_PROPERTY: dict[str, object] = {
     "City": "Hồ Chí Minh",
     "District": "Gò Vấp",
+    "Ward": "Phường 12",
+    "Street": "Đường Quang Trung",
+    "Project": None,
     "Area": 54.0,
     "Frontage": 4.1,
     "Access Road": 3.5,
@@ -73,7 +87,9 @@ SAMPLE_PROPERTY: dict[str, object] = {
 }
 
 # The same property with three blocking errors, for the invalid-input state.
-INVALID_PROPERTY: dict[str, object] = {**SAMPLE_PROPERTY, "District": None, "Area": 0.0, "Access Road": None}
+INVALID_PROPERTY: dict[str, object] = {
+    **SAMPLE_PROPERTY, "District": None, "Ward": None, "Street": None, "Area": 0.0,
+}
 
 
 def fields_in(group: str) -> list[Field]:

@@ -1,0 +1,13 @@
+{
+  "model": "LightGBM_v2_project_te__ward_te__street_te_seed2026",
+  "fold": 1,
+  "train_MAE": 0.6042660255021072,
+  "cv_MAE": 0.9267924464217002,
+  "cv_RMSE": 1.2472951617141745,
+  "cv_R2": 0.6816101573098672,
+  "MAE_gap": 0.32252642091959305,
+  "fit_seconds": 49.32056000002194,
+  "selected_trees": 717,
+  "selection_rounds_run": 817,
+  "hit_iteration_limit": false
+}

@@ -5,17 +5,18 @@ outside what the training split contains.
 """
 from __future__ import annotations
 
-from . import formatting as fmt
-from .reference import Reference
+from . import content, formatting as fmt
+from .reference import Reference, model_key
 from .schema import FIELDS
 
 REQUIRED_MESSAGE = {
     "City": "Chọn tỉnh / thành phố.",
     "District": "Chọn quận / huyện.",
+    "Ward": "Chọn phường / xã.",
     "Area": "Nhập diện tích.",
-    "Frontage": "Nhập chiều rộng mặt tiền.",
-    "Access Road": "Nhập chiều rộng đường vào.",
 }
+# Below this many training rows a ward's price level is mostly borrowed from its district.
+FEW_WARD_ROWS = 5
 
 
 def validate(values: dict[str, object], reference: Reference) -> tuple[dict[str, str], dict[str, str]]:
@@ -55,5 +56,11 @@ def validate(values: dict[str, object], reference: Reference) -> tuple[dict[str,
                 f"{field.label} nằm ngoài khoảng có trong dữ liệu "
                 f"({fmt.number(low)} – {fmt.number(high)}{unit}), nên kết quả có thể kém tin cậy."
             )
+
+    ward, district, city = values.get("Ward"), values.get("District"), values.get("City")
+    if ward and "Ward" not in errors:
+        rows = reference.ward_rows.get((city, district, model_key("ward", str(ward))), 0)
+        if rows < FEW_WARD_ROWS:
+            warnings["Ward"] = content.WARD_FEW_ROWS.format(n=fmt.count(rows))
 
     return errors, warnings

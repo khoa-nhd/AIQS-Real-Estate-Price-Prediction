@@ -1,0 +1,13 @@
+{
+  "model": "LightGBM_v2_project_te__ward_te__stop_rmse",
+  "fold": 1,
+  "train_MAE": 0.6896589359257419,
+  "cv_MAE": 0.9452916903660048,
+  "cv_RMSE": 1.2615810468511097,
+  "cv_R2": 0.6742750391187673,
+  "MAE_gap": 0.2556327544402629,
+  "fit_seconds": 33.2961948000011,
+  "selected_trees": 405,
+  "selection_rounds_run": 505,
+  "hit_iteration_limit": false
+}

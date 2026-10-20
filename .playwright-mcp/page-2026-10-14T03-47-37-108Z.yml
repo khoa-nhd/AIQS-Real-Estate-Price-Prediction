@@ -1,0 +1,169 @@
+- generic [ref=e3]:
+  - banner
+  - generic [ref=e6]:
+    - status [ref=e9]:
+      - generic [aria-hidden] [ref=e10]: science
+      - paragraph [ref=e11]: Chế độ xem trước giao diện — các con số là dữ liệu mẫu, không phải kết quả dự đoán.
+    - generic [ref=e13]:
+      - tablist [ref=e14]:
+        - tab [selected] [ref=e15] [cursor=pointer]:
+          - paragraph [ref=e17]: Ước tính giá
+        - tab [ref=e18] [cursor=pointer]:
+          - paragraph [ref=e20]: Độ chính xác của mô hình
+        - tab [ref=e21] [cursor=pointer]:
+          - paragraph [ref=e23]: Dữ liệu và giới hạn
+      - tabpanel "Ước tính giá" [ref=e24]:
+        - generic [ref=e27]:
+          - generic [ref=e31]:
+            - generic [ref=e33]:
+              - heading "Ước tính giá nhà" [level=1] [ref=e34]
+              - paragraph [ref=e35]: Nhập thông tin căn nhà để nhận mức giá ước tính từ mô hình. Đây là con số tham khảo, không phải kết quả thẩm định.
+            - heading "Vị trí" [level=2] [ref=e38]
+            - generic [ref=e40]:
+              - generic [ref=e44]:
+                - paragraph [ref=e48]: Tỉnh / Thành phố *
+                - group [ref=e50]:
+                  - combobox "Tỉnh / Thành phố \\*" [ref=e51]
+                  - button "Open" [ref=e52] [cursor=pointer]
+              - generic [ref=e59]:
+                - paragraph [ref=e63]: Quận / Huyện *
+                - group [ref=e65]:
+                  - combobox "Quận / Huyện \\*" [disabled] [ref=e66]
+                  - button "Open" [disabled] [ref=e67]
+            - heading "Kích thước" [level=2] [ref=e73]
+            - generic [ref=e75]:
+              - generic [ref=e77]:
+                - generic [ref=e79]:
+                  - paragraph [ref=e83]: Diện tích (m²) *
+                  - generic [ref=e85]:
+                    - spinbutton "Diện tích (m²) \\*" [ref=e86]
+                    - generic [ref=e87]:
+                      - button "Decrement" [disabled] [ref=e88]
+                      - button "Increment" [disabled] [ref=e91]
+                - paragraph [ref=e97]: "Mô hình đã học: 4 – 595 m²"
+              - generic [ref=e99]:
+                - generic [ref=e101]:
+                  - paragraph [ref=e105]: Mặt tiền (m) *
+                  - generic [ref=e107]:
+                    - spinbutton "Mặt tiền (m) \\*" [ref=e108]
+                    - generic [ref=e109]:
+                      - button "Decrement" [disabled] [ref=e110]
+                      - button "Increment" [disabled] [ref=e113]
+                - paragraph [ref=e119]: "Mô hình đã học: 0 – 73 m"
+              - generic [ref=e121]:
+                - generic [ref=e123]:
+                  - paragraph [ref=e127]: Đường vào (m) *
+                  - generic [ref=e129]:
+                    - spinbutton "Đường vào (m) \\*" [ref=e130]
+                    - generic [ref=e131]:
+                      - button "Decrement" [disabled] [ref=e132]
+                      - button "Increment" [disabled] [ref=e135]
+                - paragraph [ref=e141]: "Mô hình đã học: 1 – 85 m"
+            - heading "Kết cấu" [level=2] [ref=e144]
+            - generic [ref=e146]:
+              - generic [ref=e148]:
+                - generic [ref=e150]:
+                  - paragraph [ref=e154]: Số tầng
+                  - generic [ref=e156]:
+                    - spinbutton "Số tầng" [ref=e157]
+                    - generic [ref=e158]:
+                      - button "Decrement" [disabled] [ref=e159]
+                      - button "Increment" [disabled] [ref=e162]
+                - paragraph [ref=e168]: "Mô hình đã học: 1 – 10"
+              - generic [ref=e170]:
+                - generic [ref=e172]:
+                  - paragraph [ref=e176]: Số phòng ngủ
+                  - generic [ref=e178]:
+                    - spinbutton "Số phòng ngủ" [ref=e179]
+                    - generic [ref=e180]:
+                      - button "Decrement" [disabled] [ref=e181]
+                      - button "Increment" [disabled] [ref=e184]
+                - paragraph [ref=e190]: "Mô hình đã học: 1 – 9"
+              - generic [ref=e192]:
+                - generic [ref=e194]:
+                  - paragraph [ref=e198]: Số phòng tắm
+                  - generic [ref=e200]:
+                    - spinbutton "Số phòng tắm" [ref=e201]
+                    - generic [ref=e202]:
+                      - button "Decrement" [disabled] [ref=e203]
+                      - button "Increment" [disabled] [ref=e206]
+                - paragraph [ref=e212]: "Mô hình đã học: 1 – 9"
+            - heading "Thông tin thêm (không bắt buộc)" [level=2] [ref=e215]
+            - generic [ref=e217]:
+              - generic [ref=e221]:
+                - paragraph [ref=e225]: Hướng nhà
+                - group [ref=e227]:
+                  - combobox "Hướng nhà" [ref=e228]: Không rõ
+                  - button "Open" [ref=e229] [cursor=pointer]
+              - generic [ref=e236]:
+                - paragraph [ref=e240]: Hướng ban công
+                - group [ref=e242]:
+                  - combobox "Hướng ban công" [ref=e243]: Không rõ
+                  - button "Open" [ref=e244] [cursor=pointer]
+            - generic [ref=e253]:
+              - paragraph [ref=e257]: Pháp lý
+              - radiogroup "Pháp lý" [ref=e258]:
+                - generic [ref=e260] [cursor=pointer]:
+                  - radio "Không rõ" [checked] [ref=e262]
+                  - paragraph [ref=e267]: Không rõ
+                - generic [ref=e269] [cursor=pointer]:
+                  - radio "Đã có sổ" [ref=e271]
+                  - paragraph [ref=e275]: Đã có sổ
+                - generic [ref=e277] [cursor=pointer]:
+                  - radio "Hợp đồng mua bán" [ref=e279]
+                  - paragraph [ref=e283]: Hợp đồng mua bán
+            - generic [ref=e289]:
+              - paragraph [ref=e293]: Nội thất
+              - radiogroup "Nội thất" [ref=e294]:
+                - generic [ref=e296] [cursor=pointer]:
+                  - radio "Không rõ" [checked] [ref=e298]
+                  - paragraph [ref=e303]: Không rõ
+                - generic [ref=e305] [cursor=pointer]:
+                  - radio "Cơ bản" [ref=e307]
+                  - paragraph [ref=e311]: Cơ bản
+                - generic [ref=e313] [cursor=pointer]:
+                  - radio "Đầy đủ" [ref=e315]
+                  - paragraph [ref=e319]: Đầy đủ
+            - paragraph [ref=e322]: "* Mục bắt buộc"
+            - generic [ref=e324]:
+              - button [ref=e327] [cursor=pointer]:
+                - generic "Ước tính giá" [ref=e328]:
+                  - paragraph [ref=e332]: Ước tính giá
+              - button [ref=e335] [cursor=pointer]:
+                - generic "Nhập lại" [ref=e336]:
+                  - paragraph [ref=e340]: Nhập lại
+          - generic [ref=e342]:
+            - generic [ref=e346]:
+              - heading "Chưa có kết quả" [level=2] [ref=e347]:
+                - generic [aria-hidden] [ref=e348]: info
+                - text: Chưa có kết quả
+              - paragraph [ref=e349]: Điền thông tin căn nhà rồi chọn «Ước tính giá».
+            - generic [ref=e355]:
+              - paragraph [ref=e356]: 0/5
+              - paragraph [ref=e357]: mục bắt buộc đã điền
+              - paragraph [ref=e358]: "7 mục để «Không rõ»: Số tầng, Số phòng ngủ, Số phòng tắm, Hướng nhà, Hướng ban công, Pháp lý, Nội thất."
+          - generic [ref=e360]:
+            - generic [ref=e364]:
+              - paragraph [ref=e365]: Dựa trên thông tin bạn nhập
+              - generic [ref=e366]:
+                - generic [ref=e367]:
+                  - generic [ref=e368]: Vị trí
+                  - generic [ref=e369]: Không rõ
+                - generic [ref=e370]:
+                  - generic [ref=e371]: Diện tích
+                  - generic [ref=e372]: Không rõ
+                - generic [ref=e373]:
+                  - generic [ref=e374]: Kết cấu
+                  - generic [ref=e375]: Không rõ tầng · Không rõ PN · Không rõ PT
+                - generic [ref=e376]:
+                  - generic [ref=e377]: Pháp lý
+                  - generic [ref=e378]: Không rõ
+            - generic [ref=e382]:
+              - paragraph [ref=e383]: Khoảng dao động
+              - paragraph [ref=e384]: Chưa có
+              - paragraph [ref=e385]: Mô hình chưa có khoảng ước lượng được hiệu chỉnh nên ứng dụng không hiển thị khoảng giá.
+    - group [ref=e388]:
+      - generic "construction Công cụ phòng thiết kế (không thuộc giao diện sản phẩm)" [ref=e389] [cursor=pointer]:
+        - generic [ref=e390]:
+          - generic [ref=e391]: construction
+          - paragraph [ref=e395]: Công cụ phòng thiết kế (không thuộc giao diện sản phẩm)

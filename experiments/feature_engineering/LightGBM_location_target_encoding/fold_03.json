@@ -1,0 +1,13 @@
+{
+  "model": "LightGBM_location_target_encoding",
+  "fold": 3,
+  "train_MAE": 0.7606481310722925,
+  "cv_MAE": 1.0036063936970834,
+  "cv_RMSE": 1.3548167996574363,
+  "cv_R2": 0.6331067590527175,
+  "MAE_gap": 0.24295826262479092,
+  "fit_seconds": 159.57340890000341,
+  "selected_trees": 407,
+  "selection_rounds_run": 507,
+  "hit_iteration_limit": false
+}

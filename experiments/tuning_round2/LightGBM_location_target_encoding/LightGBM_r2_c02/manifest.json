@@ -1,0 +1,104 @@
+{
+  "train_sha256": "047f4f8d482f98f1fb2ee397cc51fa41e45b76409cc7f1afc09042f6cbb1926d",
+  "features": [
+    "Area",
+    "Frontage",
+    "Access Road",
+    "House direction",
+    "Balcony direction",
+    "Floors",
+    "Bedrooms",
+    "Bathrooms",
+    "Legal status",
+    "Furniture state",
+    "City",
+    "District"
+  ],
+  "versions": {
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "scikit-learn": "1.9.1",
+    "catboost": "1.2.10",
+    "xgboost": "3.4.1",
+    "lightgbm": "4.7.0"
+  },
+  "folds": {
+    "n_splits": 3,
+    "sizes": [
+      [
+        12090,
+        6046
+      ],
+      [
+        12091,
+        6045
+      ],
+      [
+        12091,
+        6045
+      ]
+    ],
+    "sha256": "3bc8e00bb94a4223274631439fca0305aee37b0dd2bfe340622d93ac89f8ecbd"
+  },
+  "specification": {
+    "name": "LightGBM_r2_c02",
+    "family": "lgb",
+    "params": {
+      "objective": "regression",
+      "metric": "mae",
+      "n_estimators": 3000,
+      "learning_rate": 0.05,
+      "num_leaves": 127,
+      "max_depth": -1,
+      "min_child_samples": 5,
+      "subsample": 1.0,
+      "colsample_bytree": 0.7,
+      "random_state": 42,
+      "n_jobs": -1,
+      "verbosity": -1
+    },
+    "preprocessing": {
+      "blocks": [
+        "location_target_encoding"
+      ],
+      "columns": {
+        "numeric": [
+          "Area",
+          "Frontage",
+          "Access Road",
+          "Floors",
+          "Bedrooms",
+          "Bathrooms"
+        ],
+        "one_hot": [
+          "House direction",
+          "Balcony direction",
+          "Legal status",
+          "Furniture state",
+          "City",
+          "District"
+        ],
+        "target_encoded": [
+          "City",
+          "City_District"
+        ]
+      },
+      "location_normalization": "NFC, gộp khoảng trắng, bỏ dấu chấm cuối",
+      "numeric": "StandardScaler -> SimpleImputer(mean)",
+      "one_hot": "SimpleImputer(most_frequent) -> OneHotEncoder(handle_unknown=ignore)",
+      "target_encoded": "SimpleImputer(most_frequent) -> TargetEncoder(continuous, smooth=auto, cv=5, shuffle=True, random_state=42)",
+      "derived": {
+        "City_District": "City + ' | ' + District",
+        "total_floor_area": "Area * Floors",
+        "lot_depth": "Area / Frontage; Frontage <= 0 -> thiếu",
+        "rooms_total": "Bedrooms + Bathrooms"
+      }
+    },
+    "inner_split": {
+      "test_size": 0.15,
+      "random_state": 42
+    },
+    "early_stopping_rounds": 100,
+    "target": "Price (tỷ VND)"
+  }
+}
