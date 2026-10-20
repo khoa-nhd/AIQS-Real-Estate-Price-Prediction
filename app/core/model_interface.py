@@ -4,16 +4,20 @@ Every UI variant calls the model through this module and nowhere else.
 ProjectModelGateway loads the locked model exported by notebook 03 (C68):
 models/candidates/final_v2_2026-10-20/house_price_ensemble.pkl, an equal-weight
 XGBoost + LightGBM ensemble. The file is a pickle, so it is only loaded when its
-SHA-256 matches the manifest written next to it.
+SHA-256 matches the manifest written next to it, and only on the Python and
+library versions it was saved with.
 """
 from __future__ import annotations
 
 import hashlib
 import json
+import logging
 import math
 import pickle
+import sys
+from bisect import bisect_right
 from dataclasses import dataclass, field
-from pathlib import Path
+from importlib import metadata
 from typing import Protocol
 
 import pandas as pd
@@ -27,6 +31,14 @@ MODEL_DIR = MODELS_DIR / "candidates" / "final_v2_2026-10-20"
 MODEL_FILE = MODEL_DIR / "house_price_ensemble.pkl"
 MODEL_MANIFEST = MODEL_DIR / "manifest.json"
 MODEL_LABEL = "models/candidates/final_v2_2026-10-20"
+# cloudpickle stored the notebook's own classes and functions by value, as Python 3.14 bytecode,
+# so the file only loads on the Python version that wrote it. The manifest records the library versions.
+MODEL_PYTHON = (3, 14)
+# The 80% range around an estimate, from notebook 04 (split conformal on the calibration split).
+INTERVAL_FILE = ROOT / "experiments" / "calibration" / "prediction_interval.json"
+INTERVAL_LABEL = "experiments/calibration/prediction_interval.json"
+
+log = logging.getLogger(__name__)
 
 # The 12 dataset columns the model reads, plus "Address" built from the ward, street and project.
 MODEL_COLUMNS = (
@@ -46,7 +58,33 @@ class Prediction:
     price_ty: float  # total price in tỷ đồng
     is_sample: bool  # True for lab preview figures; never shown as a prediction
     source: str  # provenance line shown with the figure
-    interval: tuple[float, float, float] | None = None  # low, high, coverage; only from a calibration artifact
+    # low, high, measured coverage and the rows it was measured on; only from the calibration file
+    interval: tuple[float, float, float, int] | None = None
+
+
+@dataclass(frozen=True)
+class Interval:
+    """The range notebook 04 locked: split conformal on the calibration split, per predicted-price group."""
+
+    params: dict
+    price_range: tuple[float, float]
+    coverage: float  # measured once on the test split, after the method was locked
+    rows: int  # how many test rows that was
+    record: dict  # the whole file, for the accuracy view
+
+    def around(self, price: float) -> tuple[float, float]:
+        """Same rule as notebook 04 (C03): add the group's two ends, clip to the training prices,
+        and always keep the estimate itself inside."""
+        p = self.params
+        if p["method"] == "constant":
+            low, high = price - p["q"], price + p["q"]
+        else:
+            group = p["groups"][bisect_right(p["edges"], price)]
+            low, high = price + group["q_lo"], price + group["q_hi"]
+        floor, ceiling = self.price_range
+        low = min(min(max(low, floor), ceiling), price)
+        high = max(min(max(high, floor), ceiling), price)
+        return low, high
 
 
 class ModelUnavailable(Exception):
@@ -70,29 +108,72 @@ class LoadedModel:
     problem: str = ""
 
 
+def environment_problems(manifest: dict) -> list[str]:
+    """What differs from the environment the model was saved in: the Python version, then each library
+    the manifest lists. Empty when everything matches."""
+    problems = []
+    if sys.version_info[:2] != MODEL_PYTHON:
+        problems.append(f"cần Python {MODEL_PYTHON[0]}.{MODEL_PYTHON[1]}, máy chủ đang chạy "
+                        f"Python {sys.version_info.major}.{sys.version_info.minor}")
+    for name, wanted in manifest.get("versions", {}).items():
+        try:
+            found = metadata.version(name)
+        except metadata.PackageNotFoundError:
+            found = "chưa cài"
+        if found != wanted:
+            problems.append(f"cần {name} {wanted}, đang có {found}")
+    return problems
+
+
+def _unavailable(problem: str, manifest: dict | None = None) -> LoadedModel:
+    """A model that cannot be used. The reason also goes to the server log, where a failed deploy is read."""
+    log.error("Model not loaded: %s", problem)
+    return LoadedModel(None, manifest or {}, problem)
+
+
 @st.cache_resource(show_spinner="Đang nạp mô hình…")
 def load_project_model() -> LoadedModel:
     """Load the locked model once per server process, after checking its file against the manifest."""
     if not MODEL_FILE.is_file() or not MODEL_MANIFEST.is_file():
-        return LoadedModel(None, problem=f"Chưa có tệp mô hình trong {MODEL_LABEL}.")
+        return _unavailable(f"Chưa có tệp mô hình trong {MODEL_LABEL}.")
     try:
         manifest = json.loads(MODEL_MANIFEST.read_text(encoding="utf-8"))
     except Exception as exc:
-        return LoadedModel(None, problem=f"Không đọc được manifest.json của mô hình: {type(exc).__name__}.")
+        return _unavailable(f"Không đọc được manifest.json của mô hình: {type(exc).__name__}.")
     payload = MODEL_FILE.read_bytes()
     if hashlib.sha256(payload).hexdigest() != manifest.get("sha256"):
         # A pickle can run code when loaded: never load a file the manifest does not vouch for.
-        return LoadedModel(None, manifest, "Tệp mô hình không khớp mã kiểm tra trong manifest.json nên không được nạp.")
+        return _unavailable("Tệp mô hình không khớp mã kiểm tra trong manifest.json nên không được nạp.", manifest)
+    problems = environment_problems(manifest)
+    if problems:
+        return _unavailable("Môi trường khác lúc lưu mô hình: " + "; ".join(problems)
+                            + ". Cài lại theo app/requirements.txt.", manifest)
     try:
         model = pickle.loads(payload)
     except Exception as exc:
-        return LoadedModel(
-            None, manifest,
-            f"Không nạp được mô hình ({type(exc).__name__}). Cài thư viện theo {MODEL_LABEL}/requirements-model.txt.",
-        )
+        return _unavailable(f"Không nạp được mô hình ({type(exc).__name__}: {exc}).", manifest)
     if not callable(getattr(model, "predict", None)):
-        return LoadedModel(None, manifest, "Tệp mô hình không có hàm dự đoán.")
+        return _unavailable("Tệp mô hình không có hàm dự đoán.", manifest)
     return LoadedModel(model, manifest)
+
+
+@st.cache_resource(show_spinner=False)
+def load_interval() -> Interval | None:
+    """The calibration result, only when it was made for the model in use; otherwise no range is shown."""
+    if not INTERVAL_FILE.is_file() or not MODEL_MANIFEST.is_file():
+        return None
+    try:
+        record = json.loads(INTERVAL_FILE.read_text(encoding="utf-8"))
+        model_sha = json.loads(MODEL_MANIFEST.read_text(encoding="utf-8")).get("sha256")
+        if record["model"]["sha256"] != model_sha:
+            log.warning("%s was made for another model; no range is shown.", INTERVAL_LABEL)
+            return None
+        test = record["test"]
+        return Interval(params=record["params"], price_range=tuple(record["price_range"]),
+                        coverage=float(test["coverage"]), rows=int(test["rows"]), record=record)
+    except Exception as exc:  # an unreadable file only costs the range, never the estimate
+        log.warning("%s not used: %s", INTERVAL_LABEL, exc)
+        return None
 
 
 def build_address(features: dict[str, object]) -> str | None:
@@ -135,7 +216,9 @@ class ProjectModelGateway:
             raise InferenceError(type(exc).__name__) from exc
         if not math.isfinite(price):
             raise InferenceError("non-finite prediction")
-        return Prediction(price_ty=price, is_sample=False, source=provenance(loaded.manifest))
+        band = load_interval()
+        interval = (*band.around(price), band.coverage, band.rows) if band else None
+        return Prediction(price_ty=price, is_sample=False, source=provenance(loaded.manifest), interval=interval)
 
 
 def provenance(manifest: dict) -> str:

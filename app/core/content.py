@@ -42,6 +42,7 @@ WARD_FEW_ROWS = (
 # System banners
 BANNER_PREVIEW = "Chế độ xem trước giao diện — giá trên trang này là số mẫu, không phải giá ước tính."
 BANNER_UNAVAILABLE = "Mô hình chưa sẵn sàng. Ứng dụng chưa thể ước tính giá."
+BANNER_DETAIL = "Chi tiết cho người quản trị: {reason}"
 
 # Validation
 SUMMARY_HEADING = "Chưa thể ước tính. Cần điền hoặc sửa {n} mục:"
@@ -65,7 +66,10 @@ UNCERTAINTY_NONE_TEXT = (
     "Chưa có khoảng giá đã được kiểm chứng cho từng căn, nên ứng dụng không hiển thị khoảng."
 )
 UNCERTAINTY_INTERVAL = "{low} – {high} tỷ đồng"
-UNCERTAINTY_INTERVAL_TEXT = "Khoảng {coverage}, lấy từ bước kiểm tra độ tin cậy của mô hình."
+# the range is checked, not promised: the sentence says how often it held on houses the model had not seen
+UNCERTAINTY_INTERVAL_TEXT = (
+    "Khi thử trên {n} căn mô hình chưa từng thấy, giá trong dữ liệu nằm trong khoảng như thế này ở {coverage} số căn."
+)
 RECAP_LABEL = "Thông tin bạn đã nhập"
 
 # Where an estimate sits among the training prices (the strip under the price). Every sentence follows
@@ -95,7 +99,7 @@ PROVENANCE_SAMPLE = (
 )
 PROVENANCE_UNKNOWN = "Không có thông tin phiên bản mô hình."
 PROVENANCE_REAL = (
-    "Trung bình hai mô hình cây quyết định (XGBoost và LightGBM), khoá ngày {created}, học từ tập huấn luyện. "
+    "Trung bình của hai mô hình gồm nhiều cây quyết định (XGBoost và LightGBM), khoá ngày {created}, học từ tập huấn luyện. "
     "Khi thử một lần trên tập kiểm tra: lệch trung bình {mae} tỷ đồng, R² = {r2}."
 )
 STALE = "Thông tin đã thay đổi sau lần ước tính này. Chọn «Ước tính giá» để cập nhật."
@@ -139,7 +143,17 @@ ACC_NOTE = (
     "Khoảng {twin} số căn thử nghiệm là tin đăng trùng với dữ liệu huấn luyện; "
     "chỉ tính những căn còn lại, mức lệch trung bình là {mae_new} tỷ đồng."
 )
+ACC_INTERVAL = (
+    "Mỗi ước tính đi kèm một khoảng dao động. Trên cùng {n} căn đó, giá trong dữ liệu nằm trong khoảng ở {coverage} "
+    "số căn; khoảng rộng trung bình {width} tỷ đồng."
+)
 TEAM_DETAILS = "Chi tiết cho nhóm: các lần đo của mô hình đang dùng và {n} mô hình ứng viên"
+EVAL_INTERVAL_HEADING = "Khoảng dao động 80%"
+EVAL_INTERVAL_TEXT = (
+    "Học trên {cal} căn của tập hiệu chỉnh (calibration), riêng cho 5 nhóm giá ước tính (split conformal). "
+    "Tỷ lệ căn có giá nằm trong khoảng: {val} trên tập kiểm định; {test} trên tập kiểm tra, đo một lần sau khi đã khoá "
+    "cách tính ({test_new} nếu bỏ tin trùng với dữ liệu huấn luyện). Độ rộng trung bình {width} tỷ đồng."
+)
 EVAL_FINAL_LABEL = "Đánh giá cuối cùng trên tập kiểm tra"
 EVAL_FINAL_VALUE = "R² = {r2}"
 EVAL_FINAL_TEXT = (

@@ -195,14 +195,17 @@ def error_summary(view: state.Page) -> None:
 
 
 def banner(view: state.Page) -> None:
-    """System banner: model unavailable, or lab preview mode."""
+    """System banner: model unavailable (with the technical reason, which whoever deploys needs), or lab preview mode."""
+    detail = ""
     if view.blocked:
         kind, name, text = "unavailable", "cloud_off", content.BANNER_UNAVAILABLE
+        if view.model_reason:
+            detail = f'<p class="d1-small">{e(content.BANNER_DETAIL.format(reason=view.model_reason))}</p>'
     elif view.preview:
         kind, name, text = "preview", "science", content.BANNER_PREVIEW
     else:
         return
-    st.html(f'<div class="lab-banner lab-banner--{kind}" role="status">{icon(name)}<p>{e(text)}</p></div>')
+    st.html(f'<div class="lab-banner lab-banner--{kind}" role="status">{icon(name)}<div><p>{e(text)}</p>{detail}</div></div>')
 
 
 def submit_button(view: state.Page, **kwargs) -> None:

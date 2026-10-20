@@ -1,6 +1,56 @@
-# The Streamlit app and the locked model it loads.
-# Streamlit is pinned to the version the interface was built and checked with (it uses st.tabs(default=...),
-# horizontal containers and keyed-container CSS classes); pandas and altair are installed with it.
+# Dependencies of the Streamlit app, for Python 3.14.
+# Every version is pinned to the set the app was tested with, so a deploy server installs exactly
+# what runs locally (Streamlit Community Cloud reads this file because it sits next to streamlit_app.py).
+
+# The app. Streamlit is pinned to the version the interface was built and checked with
+# (it uses st.tabs(default=...), horizontal containers and keyed-container CSS classes).
 streamlit==1.65.0
+
 # The model file is a pickle: it needs the exact library versions it was saved with.
--r ../models/candidates/final_v2_2026-10-20/requirements-model.txt
+# Keep these equal to models/candidates/final_v2_2026-10-20/requirements-model.txt
+# (tests/test_app.py checks that).
+numpy==2.5.3
+pandas==3.0.6
+scikit-learn==1.9.1
+scipy==1.18.1
+xgboost==3.4.1
+lightgbm==4.7.0
+cloudpickle==3.1.2
+
+# Indirect dependencies, locked to the tested versions (all have Linux wheels for Python 3.14).
+altair==6.3.0
+anyio==4.15.1
+attrs==26.1.0
+certifi==2026.10.19
+charset-normalizer==3.5.2
+click==8.5.0
+h11==0.16.0
+httptools==0.9.0
+idna==3.20
+itsdangerous==2.2.0
+Jinja2==3.1.6
+joblib==1.6.0
+jsonschema==4.26.0
+jsonschema-specifications==2025.9.1
+MarkupSafe==3.0.4
+narwhals==2.27.1
+packaging==26.3
+pillow==12.3.0
+protobuf==7.36.2
+pyarrow==25.0.1
+pydeck==0.9.3
+python-dateutil==2.9.0.post0
+python-multipart==0.0.32
+referencing==0.37.0
+requests==2.34.2
+rpds-py==2026.9.1
+six==1.17.0
+starlette==1.9.0
+threadpoolctl==3.7.0
+toml==0.10.2
+typing_extensions==4.16.0
+tzdata==2026.5
+urllib3==2.8.0
+uvicorn==0.54.0
+watchdog==6.0.0
+websockets==17.3

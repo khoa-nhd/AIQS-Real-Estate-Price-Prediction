@@ -1,0 +1,12 @@
+# The image needs only the app and the files it reads (see Dockerfile); everything else stays out.
+*
+!app/
+!models/candidates/final_v2_2026-10-20/
+!data/vietnam_housing_dataset.csv
+!data/processed/splits_v2/train.csv
+!experiments/final_selection/test_evaluation.json
+!experiments/calibration/prediction_interval.json
+!experiments/ensemble_oof/blend_summary.csv
+!experiments/model_comparison_cv/recovered_model_cv_summary.csv
+!experiments/model_comparison_cv/recovered_model_cv_folds.csv
+**/__pycache__

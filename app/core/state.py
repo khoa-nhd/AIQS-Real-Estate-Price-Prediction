@@ -253,9 +253,9 @@ def result_slots(view: Page, reference: Reference) -> dict[str, object]:
     sample = prediction.is_sample
     snapshot = view.outcome.snapshot
     if prediction.interval:
-        low, high, coverage = prediction.interval
+        low, high, coverage, rows = prediction.interval
         uncertainty = content.UNCERTAINTY_INTERVAL.format(low=fmt.price(low), high=fmt.price(high))
-        uncertainty_text = content.UNCERTAINTY_INTERVAL_TEXT.format(coverage=fmt.percent(coverage))
+        uncertainty_text = content.UNCERTAINTY_INTERVAL_TEXT.format(coverage=fmt.percent(coverage), n=fmt.count(rows))
     else:
         uncertainty, uncertainty_text = content.UNCERTAINTY_NONE, content.UNCERTAINTY_NONE_TEXT
     slots.update(
