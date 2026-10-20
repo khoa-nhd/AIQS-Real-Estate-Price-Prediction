@@ -17,11 +17,11 @@ Vercel không chạy được máy chủ Streamlit. Nếu chạy mô hình trong
 
 ## Deploy lên Vercel
 
-`vercel.json` ở gốc repo đã cấu hình sẵn: không cài đặt, không build, phục vụ thư mục `web/public`.
+`vercel.json` ở gốc repo đã cấu hình sẵn: không cài đặt, không build, phục vụ thẳng thư mục `web/public` dưới dạng file tĩnh. `.vercelignore` chỉ cho `vercel.json` và `web/public` vào bản deploy, nên Vercel không nhận nhầm `app/` hay notebook là một dự án khác cần build.
 
 1. Push repo lên GitHub (các tệp trong `web/public/data/` phải được commit, vì Vercel không tự tạo chúng).
 2. Vào https://vercel.com/new, chọn **Import** repo `khoa-nhd/AIQS-Real-Estate-Price-Prediction`.
-3. Giữ nguyên các thiết lập: Framework Preset **Other**, Root Directory là gốc repo (`./`). Vercel đọc `vercel.json` nên không cần sửa Build/Output.
+3. Giữ nguyên các thiết lập: Framework Preset **Other**, Root Directory là gốc repo (`./`), không bật Override cho Build/Output/Install Command. Vercel đọc `vercel.json`.
 4. Bấm **Deploy**. Kiểm tra sau khi deploy: chọn Hà Nội / Cầu Giấy / Phường Dịch Vọng, 60 m², 4 tầng. Kết quả phải là **8,9 tỷ đồng**, khoảng dao động **7,4 – 10,3 tỷ đồng**.
 
 Mỗi lần push lên `main`, Vercel tự deploy lại.
@@ -45,7 +45,7 @@ python web/scripts/export_web_data.py
 python -m unittest tests.test_web_model -v
 ```
 
-Test cần Node.js. Commit lại `web/public/data/` sau khi test đạt.
+Test cần Node.js 22 trở lên (Node tự nhận `model.js` là ES module). Commit lại `web/public/data/` sau khi test đạt.
 
 ## Tệp
 

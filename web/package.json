@@ -1,9 +1,0 @@
-{
-  "name": "aiqs-house-price-web",
-  "private": true,
-  "type": "module",
-  "description": "Static web app of the AIQS house price model (deployed on Vercel from web/public). No build step and no dependencies.",
-  "scripts": {
-    "serve": "python -m http.server 8702 --directory public"
-  }
-}

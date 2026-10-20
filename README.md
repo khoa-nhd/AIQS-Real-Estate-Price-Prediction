@@ -62,7 +62,7 @@ AIQS-Real-Estate-Price-Prediction/
 ├── web/                              # ứng dụng web tĩnh cho Vercel
 ├── tests/                            # test_app.py, test_web_model.py
 ├── reports/application_report/       # báo cáo: main.tex và bản PDF
-├── vercel.json                       # cấu hình Vercel
+├── vercel.json, .vercelignore        # cấu hình Vercel (chỉ deploy web/public)
 ├── Dockerfile, packages.txt          # deploy Docker / Streamlit Community Cloud
 └── README.md
 ```
@@ -103,7 +103,7 @@ python -m http.server 8702 --directory web/public
 python -m unittest discover -s tests -v
 ```
 
-Bộ test gồm 16 test. `tests/test_web_model.py` cần Node.js. Khi đổi mô hình, chạy lại notebook 04, sau đó chạy `python web/scripts/export_web_data.py` rồi chạy test.
+Bộ test gồm 16 test. `tests/test_web_model.py` cần Node.js 22 trở lên. Khi đổi mô hình, chạy lại notebook 04, sau đó chạy `python web/scripts/export_web_data.py` rồi chạy test.
 
 ## Báo cáo
 

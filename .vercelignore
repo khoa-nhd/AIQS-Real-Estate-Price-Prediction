@@ -1,0 +1,7 @@
+# Vercel only needs the static site: everything else in the repo stays out of the deployment,
+# so nothing (app/, notebooks, data) can be mistaken for another project to build.
+/*
+!vercel.json
+!web
+web/*
+!web/public
