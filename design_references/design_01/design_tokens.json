@@ -1,0 +1,40 @@
+{
+  "reference": "design_01",
+  "source": "Screen Recording 2026-10-14 091300.mp4",
+  "method": "frames + pixel measurement; no DOM",
+  "units": "capture px unless noted; true CSS px unknown",
+  "colors": {
+    "background": { "value": "#0C0E1D", "basis": "printed in reference" },
+    "gutter": { "value": "#030208", "basis": "measured" },
+    "panel": { "value": "#0A121F", "basis": "measured (range #0A121F-#151329)" },
+    "surface_raised": { "value": "#211F36", "basis": "printed in reference" },
+    "inner_page": { "value": "#1B1636", "basis": "measured" },
+    "text_muted": { "value": "#616083", "basis": "printed in reference" },
+    "text_primary": { "value": "~#F2F2F7", "basis": "estimated (near-white headline text)" },
+    "accent_action": { "value": "#51FAAA", "basis": "printed; button measured #53FCAB" },
+    "accent_active_fill": { "value": "#284648", "basis": "measured (active pill fill)" },
+    "glow_pink": { "value": "#FF81FF", "basis": "printed; donut measured #CE73DC" },
+    "glow_teal": { "value": "#51C892", "basis": "measured (donut gradient end)" }
+  },
+  "typography": {
+    "family": { "value": "Exo 2", "basis": "inferred from letterforms; not confirmed" },
+    "case": { "value": "Title Case headings", "basis": "observed" },
+    "sizes": [
+      { "role": "figure", "value": "~19", "weight": 600 },
+      { "role": "panel label", "value": "~16", "weight": 400 },
+      { "role": "headline (shrunk page)", "value": "~14-16", "weight": 600 },
+      { "role": "nav", "value": "~9", "weight": 400 }
+    ],
+    "line_height": "unknown"
+  },
+  "radius": {
+    "button": "~6", "card": "~10", "panel": "~18-20", "pill": "fully rounded", "basis": "estimated"
+  },
+  "borders": { "panel": "1px ~rgba(255,255,255,0.08)", "basis": "estimated" },
+  "shadows": { "value": "none observed", "depth": "colour glows (pink, mint), ~120-200px blur, estimated" },
+  "spacing": { "gutter": "~10-12", "panel_padding": "~20", "pill_gap": "~12", "base_unit": "unknown" },
+  "layout": { "type": "bento board", "columns": "3 at ~50/24/24%", "max_width": "unknown" },
+  "motion": { "observed": ["pill toggle cycling", "panel cross-fade", "donut arc fill"], "durations": "~0.4-0.8s estimated", "easing": "unknown" },
+  "breakpoints": "unknown",
+  "focus_styles": "unknown"
+}

@@ -1,0 +1,63 @@
+{
+  "source": "local file: Screenshot 2026-10-14 0914491.jpg (cropped hero; no URL; analysed from pixels, no DOM)",
+  "tokens": {
+    "spacing": {
+      "scale": [10, 16, 36, 38, 45, 60],
+      "base_unit": "unknown (capture px; ~approx)"
+    },
+    "typography": {
+      "families": ["extended grotesque (unidentified)", "neutral grotesque (Inter-like)", "monospace (IBM Plex Mono-like)"],
+      "scale": [
+        { "role": "hero", "size": "~58px capture", "weight": "500-600", "family": "extended grotesque" },
+        { "role": "figure", "size": "~42px capture", "weight": "300", "family": "monospace" },
+        { "role": "body", "size": "~16.5px capture", "weight": "400", "family": "grotesque" },
+        { "role": "button", "size": "~15px capture, uppercase", "weight": "400", "family": "monospace" },
+        { "role": "nav", "size": "~14px capture", "weight": "400", "family": "monospace" },
+        { "role": "label", "size": "~9px capture", "weight": "400", "family": "monospace" }
+      ]
+    },
+    "colors": [
+      { "role": "background", "value": "#1D1D1D" },
+      { "role": "text-primary", "value": "~#E9F2EE" },
+      { "role": "text-secondary", "value": "~#8A8A8A" },
+      { "role": "rule", "value": "#3C3C3C" },
+      { "role": "accent", "value": "#00EB9B" }
+    ],
+    "radius": ["0px"],
+    "shadows": [],
+    "image_ratios": [
+      { "usage": "hero chart graphic", "ratio": "~0.95:1" }
+    ],
+    "grid": { "max_width": "~910px capture", "columns": "2 (hero) / 3 (stats)", "gutter": "~36px capture" }
+  },
+  "taste": [
+    {
+      "name": "Corners, Not Cards",
+      "trigger": "When the key figures needed grouping",
+      "decision": "Chose L-shaped corner brackets and a hairline baseline over filled or bordered cards",
+      "reason": "Brackets frame a region like a viewfinder; the field stays continuous and figures read as readouts",
+      "evidence": ["3 bracket-framed stat blocks", "only surface #1D1D1D", "no radius, no shadow"]
+    },
+    {
+      "name": "Monospace Is the Instrument Voice",
+      "trigger": "When setting navigation, actions and numbers",
+      "decision": "Chose monospace for all UI and data strings over one sans for everything",
+      "reason": "Fixed-width digits and labels read as machine output, which is the product's promise",
+      "evidence": ["mono nav ~14", "mono button ~15", "mono figures ~42", "mono labels ~9 with 001-003 indices"]
+    },
+    {
+      "name": "Green Only Where You Can Go",
+      "trigger": "When choosing where colour appears",
+      "decision": "Chose mint #00EB9B on 3 elements over an untinted gray ground, over a branded or tinted palette",
+      "reason": "Against pure gray, green carries one meaning: action or current place",
+      "evidence": ["#1D1D1D 75% of area", "mint on active nav, sign-in, primary button"]
+    },
+    {
+      "name": "Square and Flat",
+      "trigger": "When styling the primary button and regions",
+      "decision": "Chose zero radius and no shadow over rounded raised controls",
+      "reason": "Hard edges read as precision; the page reads as a terminal",
+      "evidence": ["button radius 0", "no rounded element", "no shadow"]
+    }
+  ]
+}

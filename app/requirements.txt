@@ -1,0 +1,6 @@
+# The Streamlit app and the locked model it loads.
+# Streamlit is pinned to the version the interface was built and checked with (it uses st.tabs(default=...),
+# horizontal containers and keyed-container CSS classes); pandas and altair are installed with it.
+streamlit==1.65.0
+# The model file is a pickle: it needs the exact library versions it was saved with.
+-r ../models/candidates/final_v2_2026-10-20/requirements-model.txt

@@ -1,0 +1,70 @@
+{
+  "source": "local file: Screen Recording 2026-10-14 092120.mp4 (full landing page scrolled; no URL; analysed from frames, no DOM)",
+  "tokens": {
+    "spacing": {
+      "scale": [10, 16, 100, 140],
+      "base_unit": "unknown (capture px; ~approx)"
+    },
+    "typography": {
+      "families": ["tight neo-grotesque (Inter Display / Satoshi-like, inferred)"],
+      "scale": [
+        { "role": "closing", "size": "~48px capture", "weight": "400", "family": "neo-grotesque" },
+        { "role": "hero", "size": "~40px capture", "weight": "600", "family": "neo-grotesque" },
+        { "role": "section", "size": "~30px capture", "weight": "400", "family": "neo-grotesque" },
+        { "role": "price", "size": "~28px capture", "weight": "400", "family": "neo-grotesque" },
+        { "role": "card-title", "size": "~16px capture", "weight": "400", "family": "neo-grotesque" },
+        { "role": "body", "size": "~11-12px capture", "weight": "400", "family": "neo-grotesque" }
+      ]
+    },
+    "colors": [
+      { "role": "background-hero", "value": "#17161C" },
+      { "role": "background-sections", "value": "#000000" },
+      { "role": "card", "value": "#1D1C24" },
+      { "role": "card-raised", "value": "#221E2F" },
+      { "role": "border", "value": "#38373C" },
+      { "role": "text-primary", "value": "#FDFDFF" },
+      { "role": "text-secondary", "value": "~#9E9AA6" },
+      { "role": "accent", "value": "#6F47C2" },
+      { "role": "accent-dark", "value": "#5C408D" },
+      { "role": "accent-light", "value": "#815CCE" },
+      { "role": "spotlight", "value": "#FEFCFD" }
+    ],
+    "radius": ["~6px small button", "~10px faq row / tile", "~14px card", "~16px dashboard frame", "999px CTA / toggle / nav group"],
+    "shadows": ["none conventional; white spotlight beam + violet radial glows"],
+    "image_ratios": [
+      { "usage": "hero dashboard mock-up", "ratio": "~1.7:1" },
+      { "usage": "testimonial avatar", "ratio": "1:1" }
+    ],
+    "grid": { "max_width": "~730px capture", "columns": "centred column; feature bento 2+2; testimonials 3", "gutter": "~10px capture" }
+  },
+  "taste": [
+    {
+      "name": "Light Falls on the Product",
+      "trigger": "When connecting the hero CTA with the product shot",
+      "decision": "Drew a white spotlight beam from the CTA onto the dashboard over a static screenshot",
+      "reason": "The beam links click-here to what-you-get in one gesture and pulls the eye down",
+      "evidence": ["spotlight #FEFCFD under the CTA", "dashboard lit at its top edge in f00-f02"]
+    },
+    {
+      "name": "Violet Means Act",
+      "trigger": "When choosing where the brand violet appears",
+      "decision": "Kept violet to CTAs, active toggle, check dots and one chart bar over violet backgrounds or tinted headings",
+      "reason": "On an almost colourless page the violet button is the only thing that asks to be pressed",
+      "evidence": ["CTAs #5C408D-#6F47C2", "dots #815CCE", "grounds #000000 / #17161C"]
+    },
+    {
+      "name": "One Centre Line",
+      "trigger": "When laying out a long single-product page",
+      "decision": "Put every headline, CTA, pricing card and FAQ on one centred axis over alternating left/right rows",
+      "reason": "A single axis makes the page read as one argument; the eye never searches for the next start",
+      "evidence": ["hero, section titles, pricing, FAQ (~620 wide), closing panel all centred"]
+    },
+    {
+      "name": "Black Floor, Lifted Cards",
+      "trigger": "When separating sections and grouping content",
+      "decision": "Chose pure black ground with long gaps and lifted tinted cards over section bands or divider rules",
+      "reason": "Empty black lets each section breathe; lifted cards show where to read without lines",
+      "evidence": ["#000000 33% of features frame", "cards #1D1C24-#221E2F", "no rules", "gaps ~100-140px"]
+    }
+  ]
+}

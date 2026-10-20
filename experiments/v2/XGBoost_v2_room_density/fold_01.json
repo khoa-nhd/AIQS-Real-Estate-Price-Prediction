@@ -1,0 +1,13 @@
+{
+  "model": "XGBoost_v2_room_density",
+  "fold": 1,
+  "train_MAE": 0.4978313732464715,
+  "cv_MAE": 0.9956892614304684,
+  "cv_RMSE": 1.3243927065806853,
+  "cv_R2": 0.6410331948239438,
+  "MAE_gap": 0.49785788818399695,
+  "fit_seconds": 28.043733300000895,
+  "selected_trees": 1023,
+  "selection_rounds_run": 1123,
+  "hit_iteration_limit": false
+}

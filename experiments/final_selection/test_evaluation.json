@@ -1,0 +1,32 @@
+{
+  "status": "official_single_test_evaluation",
+  "source": "notebooks/03_model_experiments.ipynb, C67",
+  "final_choice": "Ensemble_w0.5",
+  "selection_manifest_sha256": "8b0cec096a12d626e8e069e2496e324ee797f194777b4c5d32f5be0533e1a141",
+  "test_sha256": "db6ad72f64bb7f477ff5fff0506b9e27dbf382d75a760a78fb05cf79370ea481",
+  "rows": 4535,
+  "metrics": {
+    "MAE": 0.8916683868309703,
+    "RMSE": 1.2187799388846823,
+    "R2": 0.6986050562104236
+  },
+  "metrics_without_twins": {
+    "MAE": 0.9343126330352194,
+    "RMSE": 1.2658621089774462,
+    "R2": 0.6770990177473579
+  },
+  "twin_share": 0.1071664829106946,
+  "components": {
+    "XGBoost": {
+      "MAE": 0.8967167807971236,
+      "RMSE": 1.2294524357034335,
+      "R2": 0.6933034918425073
+    },
+    "LightGBM": {
+      "MAE": 0.9051916484977226,
+      "RMSE": 1.230541819862528,
+      "R2": 0.6927597402813501
+    }
+  },
+  "acceptance_R2_at_least_0_7": false
+}

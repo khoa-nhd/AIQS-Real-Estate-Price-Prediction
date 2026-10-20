@@ -1,0 +1,13 @@
+{
+  "model": "XGBoost_v2_median_seed2026",
+  "fold": 3,
+  "train_MAE": 0.45723172139593005,
+  "cv_MAE": 0.9803975513494142,
+  "cv_RMSE": 1.335404513330664,
+  "cv_R2": 0.643545383233482,
+  "MAE_gap": 0.5231658299534842,
+  "fit_seconds": 46.2191548999981,
+  "selected_trees": 1212,
+  "selection_rounds_run": 1312,
+  "hit_iteration_limit": false
+}

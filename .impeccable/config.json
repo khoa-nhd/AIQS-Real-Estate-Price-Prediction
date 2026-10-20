@@ -1,0 +1,26 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "files": [
+          "ui_variants/design_02/styles.css"
+        ],
+        "createdAt": "2026-10-14T03:50:06.590Z",
+        "reason": "Claude: design_02 reproduces the leap reference (Inter-like body, wide grotesque headline); Mona Sans is the verified Vietnamese-capable stand-in. Evidence: design_references/design_02/design_spec.md"
+      },
+      {
+        "rule": "overused-font",
+        "value": "mona sans",
+        "files": [
+          "ui_variants/design_02/styles.css"
+        ],
+        "createdAt": "2026-10-14T03:50:06.956Z",
+        "reason": "Claude: design_02 reproduces the leap reference (Inter-like body, wide grotesque headline); Mona Sans is the verified Vietnamese-capable stand-in. Evidence: design_references/design_02/design_spec.md"
+      }
+    ]
+  }
+}

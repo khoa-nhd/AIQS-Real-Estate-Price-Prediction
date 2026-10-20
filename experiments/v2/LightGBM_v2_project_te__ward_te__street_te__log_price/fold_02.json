@@ -1,0 +1,13 @@
+{
+  "model": "LightGBM_v2_project_te__ward_te__street_te__log_price",
+  "fold": 2,
+  "train_MAE": 0.6605027335832079,
+  "cv_MAE": 0.92631977548003,
+  "cv_RMSE": 1.2665299432044916,
+  "cv_R2": 0.6667626106058357,
+  "MAE_gap": 0.2658170418968221,
+  "fit_seconds": 66.50690829998348,
+  "selected_trees": 447,
+  "selection_rounds_run": 547,
+  "hit_iteration_limit": false
+}

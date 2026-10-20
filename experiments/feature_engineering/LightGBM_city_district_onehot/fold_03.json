@@ -1,0 +1,13 @@
+{
+  "model": "LightGBM_city_district_onehot",
+  "fold": 3,
+  "train_MAE": 0.7461784854733835,
+  "cv_MAE": 1.015404047404668,
+  "cv_RMSE": 1.367476056887808,
+  "cv_R2": 0.6262183071117817,
+  "MAE_gap": 0.26922556193128444,
+  "fit_seconds": 99.46633900003508,
+  "selected_trees": 393,
+  "selection_rounds_run": 493,
+  "hit_iteration_limit": false
+}

@@ -1,0 +1,97 @@
+{
+  "train_sha256": "bcbc0634c3885cb03eff317756d7d9b42b7732ea9be3c033ad52890c0dc4a0ca",
+  "features": [
+    "Area",
+    "Frontage",
+    "Access Road",
+    "House direction",
+    "Balcony direction",
+    "Floors",
+    "Bedrooms",
+    "Bathrooms",
+    "Legal status",
+    "Furniture state",
+    "City",
+    "District"
+  ],
+  "versions": {
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "scikit-learn": "1.9.1",
+    "catboost": "1.2.10",
+    "xgboost": "3.4.1",
+    "lightgbm": "4.7.0"
+  },
+  "folds": {
+    "n_splits": 3,
+    "sizes": [
+      [
+        12090,
+        6046
+      ],
+      [
+        12091,
+        6045
+      ],
+      [
+        12091,
+        6045
+      ]
+    ],
+    "sha256": "3bc8e00bb94a4223274631439fca0305aee37b0dd2bfe340622d93ac89f8ecbd"
+  },
+  "specification": {
+    "name": "XGBoost_v2_median_seed7",
+    "family": "xgb",
+    "params": {
+      "n_estimators": 3000,
+      "max_depth": 9,
+      "learning_rate": 0.05,
+      "objective": "reg:squarederror",
+      "eval_metric": "mae",
+      "tree_method": "hist",
+      "subsample": 0.8,
+      "colsample_bytree": 0.7,
+      "random_state": 7,
+      "n_jobs": -1,
+      "min_child_weight": 1
+    },
+    "preprocessing": {
+      "data": "splits_v2",
+      "blocks": [],
+      "block_definitions": {},
+      "columns": {
+        "numeric": [
+          "Area",
+          "Floors",
+          "Bedrooms",
+          "Bathrooms"
+        ],
+        "frontage_access": [
+          "Frontage",
+          "Access Road"
+        ],
+        "one_hot": [
+          "House direction",
+          "Balcony direction",
+          "Legal status",
+          "Furniture state",
+          "City",
+          "District"
+        ],
+        "target_encoded": [],
+        "area_x_location": []
+      },
+      "numeric": "StandardScaler -> SimpleImputer(mean)",
+      "frontage_access": "StandardScaler -> SimpleImputer(median)",
+      "one_hot": "SimpleImputer(most_frequent) -> OneHotEncoder(handle_unknown=ignore)",
+      "target_encoded": "SimpleImputer(constant='__MISSING__') -> TargetEncoder(continuous, smooth=auto, KFold(5, shuffle=True, random_state=42))"
+    },
+    "inner_split": {
+      "test_size": 0.15,
+      "random_state": 42
+    },
+    "early_stopping_rounds": 100,
+    "target": "Price (tỷ VND)"
+  }
+}

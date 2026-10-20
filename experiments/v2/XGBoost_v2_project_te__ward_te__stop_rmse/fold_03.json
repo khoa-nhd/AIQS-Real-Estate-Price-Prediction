@@ -1,0 +1,13 @@
+{
+  "model": "XGBoost_v2_project_te__ward_te__stop_rmse",
+  "fold": 3,
+  "train_MAE": 0.6169019899901874,
+  "cv_MAE": 0.927938627405143,
+  "cv_RMSE": 1.272662923868718,
+  "cv_R2": 0.676253301070511,
+  "MAE_gap": 0.3110366374149556,
+  "fit_seconds": 18.127454700006638,
+  "selected_trees": 582,
+  "selection_rounds_run": 682,
+  "hit_iteration_limit": false
+}

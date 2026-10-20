@@ -1,0 +1,186 @@
+- generic [ref=e3]:
+  - banner
+  - generic [ref=e6]:
+    - status [ref=e9]:
+      - generic [aria-hidden] [ref=e10]: science
+      - paragraph [ref=e11]: Chế độ xem trước giao diện — các con số là dữ liệu mẫu, không phải kết quả dự đoán.
+    - generic [ref=e13]:
+      - tablist [ref=e14]:
+        - tab [selected] [ref=e15] [cursor=pointer]:
+          - paragraph [ref=e17]: Ước tính giá
+        - tab [ref=e18] [cursor=pointer]:
+          - paragraph [ref=e20]: Độ chính xác của mô hình
+        - tab [ref=e21] [cursor=pointer]:
+          - paragraph [ref=e23]: Dữ liệu và giới hạn
+      - tabpanel "Ước tính giá" [ref=e24]:
+        - generic [ref=e27]:
+          - generic [ref=e31]:
+            - generic [ref=e33]:
+              - heading "Ước tính giá nhà" [level=1] [ref=e34]
+              - paragraph [ref=e35]: Nhập thông tin căn nhà để nhận mức giá ước tính từ mô hình. Đây là con số tham khảo, không phải kết quả thẩm định.
+            - heading "Vị trí" [level=2] [ref=e788]
+            - generic [ref=e790]:
+              - generic [ref=e794]:
+                - paragraph [ref=e798]: Tỉnh / Thành phố *
+                - group [ref=e800]:
+                  - combobox "Tỉnh / Thành phố \\*" [ref=e801]: Hồ Chí Minh
+                  - button "Clear value" [ref=e802] [cursor=pointer]
+                  - button "Open" [ref=e806] [cursor=pointer]
+              - generic [ref=e813]:
+                - paragraph [ref=e817]: Quận / Huyện *
+                - group [ref=e819]:
+                  - combobox "Quận / Huyện \\*" [ref=e820]: Gò Vấp
+                  - button "Clear value" [ref=e821] [cursor=pointer]
+                  - button "Open" [ref=e825] [cursor=pointer]
+            - heading "Kích thước" [level=2] [ref=e831]
+            - generic [ref=e833]:
+              - generic [ref=e835]:
+                - generic [ref=e837]:
+                  - paragraph [ref=e841]: Diện tích (m²) *
+                  - generic [ref=e843]:
+                    - spinbutton "Diện tích (m²) \\*" [ref=e844]: "54.0"
+                    - button "Clear value" [ref=e845] [cursor=pointer]
+                    - generic [ref=e849]:
+                      - button "Decrement" [ref=e850] [cursor=pointer]
+                      - button "Increment" [ref=e853] [cursor=pointer]
+                - paragraph [ref=e859]: "Mô hình đã học: 4 – 595 m²"
+              - generic [ref=e861]:
+                - generic [ref=e863]:
+                  - paragraph [ref=e867]: Mặt tiền (m) *
+                  - generic [ref=e869]:
+                    - spinbutton "Mặt tiền (m) \\*" [ref=e870]: "4.1"
+                    - button "Clear value" [ref=e871] [cursor=pointer]
+                    - generic [ref=e875]:
+                      - button "Decrement" [ref=e876] [cursor=pointer]
+                      - button "Increment" [ref=e879] [cursor=pointer]
+                - paragraph [ref=e885]: "Mô hình đã học: 0 – 73 m"
+              - generic [ref=e887]:
+                - generic [ref=e889]:
+                  - paragraph [ref=e893]: Đường vào (m) *
+                  - generic [ref=e895]:
+                    - spinbutton "Đường vào (m) \\*" [ref=e896]: "3.5"
+                    - button "Clear value" [ref=e897] [cursor=pointer]
+                    - generic [ref=e901]:
+                      - button "Decrement" [ref=e902] [cursor=pointer]
+                      - button "Increment" [ref=e905] [cursor=pointer]
+                - paragraph [ref=e911]: "Mô hình đã học: 1 – 85 m"
+            - heading "Kết cấu" [level=2] [ref=e914]
+            - generic [ref=e916]:
+              - generic [ref=e918]:
+                - generic [ref=e920]:
+                  - paragraph [ref=e924]: Số tầng
+                  - generic [ref=e926]:
+                    - spinbutton "Số tầng" [ref=e927]: "2"
+                    - button "Clear value" [ref=e928] [cursor=pointer]
+                    - generic [ref=e932]:
+                      - button "Decrement" [ref=e933] [cursor=pointer]
+                      - button "Increment" [ref=e936] [cursor=pointer]
+                - paragraph [ref=e942]: "Mô hình đã học: 1 – 10"
+              - generic [ref=e944]:
+                - generic [ref=e946]:
+                  - paragraph [ref=e950]: Số phòng ngủ
+                  - generic [ref=e952]:
+                    - spinbutton "Số phòng ngủ" [ref=e953]: "2"
+                    - button "Clear value" [ref=e954] [cursor=pointer]
+                    - generic [ref=e958]:
+                      - button "Decrement" [ref=e959] [cursor=pointer]
+                      - button "Increment" [ref=e962] [cursor=pointer]
+                - paragraph [ref=e968]: "Mô hình đã học: 1 – 9"
+              - generic [ref=e970]:
+                - generic [ref=e972]:
+                  - paragraph [ref=e976]: Số phòng tắm
+                  - generic [ref=e978]:
+                    - spinbutton "Số phòng tắm" [ref=e979]: "3"
+                    - button "Clear value" [ref=e980] [cursor=pointer]
+                    - generic [ref=e984]:
+                      - button "Decrement" [ref=e985] [cursor=pointer]
+                      - button "Increment" [ref=e988] [cursor=pointer]
+                - paragraph [ref=e994]: "Mô hình đã học: 1 – 9"
+            - heading "Thông tin thêm (không bắt buộc)" [level=2] [ref=e997]
+            - generic [ref=e999]:
+              - generic [ref=e1003]:
+                - paragraph [ref=e1007]: Hướng nhà
+                - group [ref=e1009]:
+                  - combobox "Hướng nhà" [ref=e1010]: Tây - Nam
+                  - button "Open" [ref=e1011] [cursor=pointer]
+              - generic [ref=e1018]:
+                - paragraph [ref=e1022]: Hướng ban công
+                - group [ref=e1024]:
+                  - combobox "Hướng ban công" [ref=e1025]: Không rõ
+                  - button "Open" [ref=e1026] [cursor=pointer]
+            - generic [ref=e1031]:
+              - paragraph [ref=e1035]: Pháp lý
+              - radiogroup "Pháp lý" [ref=e1036]:
+                - generic [ref=e1038] [cursor=pointer]:
+                  - radio "Không rõ" [ref=e1040]
+                  - paragraph [ref=e1044]: Không rõ
+                - generic [ref=e1046] [cursor=pointer]:
+                  - radio "Đã có sổ" [checked] [ref=e1048]
+                  - paragraph [ref=e1053]: Đã có sổ
+                - generic [ref=e1055] [cursor=pointer]:
+                  - radio "Hợp đồng mua bán" [ref=e1057]
+                  - paragraph [ref=e1061]: Hợp đồng mua bán
+            - generic [ref=e1063]:
+              - paragraph [ref=e1067]: Nội thất
+              - radiogroup "Nội thất" [ref=e1068]:
+                - generic [ref=e1070] [cursor=pointer]:
+                  - radio "Không rõ" [ref=e1072]
+                  - paragraph [ref=e1076]: Không rõ
+                - generic [ref=e1078] [cursor=pointer]:
+                  - radio "Cơ bản" [ref=e1080]
+                  - paragraph [ref=e1084]: Cơ bản
+                - generic [ref=e1086] [cursor=pointer]:
+                  - radio "Đầy đủ" [checked] [ref=e1088]
+                  - paragraph [ref=e1093]: Đầy đủ
+            - paragraph [ref=e1096]: "* Mục bắt buộc"
+            - generic [ref=e324]:
+              - button [ref=e327] [cursor=pointer]:
+                - generic "Ước tính giá" [ref=e328]:
+                  - paragraph [ref=e332]: Ước tính giá
+              - button [ref=e335] [cursor=pointer]:
+                - generic "Nhập lại" [ref=e336]:
+                  - paragraph [ref=e340]: Nhập lại
+          - generic [ref=e342]:
+            - generic [ref=e1100]:
+              - heading "Chưa có kết quả" [level=2] [ref=e1101]:
+                - generic [aria-hidden] [ref=e1102]: info
+                - text: Chưa có kết quả
+              - paragraph [ref=e1103]: Các mục đã hợp lệ. Chọn «Ước tính giá» để tiếp tục.
+            - generic [ref=e1105]:
+              - paragraph [ref=e1106]: 5/5
+              - paragraph [ref=e1107]: mục bắt buộc đã điền
+              - paragraph [ref=e1108]: "1 mục để «Không rõ»: Hướng ban công."
+          - generic [ref=e360]:
+            - generic [ref=e364]:
+              - paragraph [ref=e1109]: Dựa trên thông tin bạn nhập
+              - generic [ref=e1110]:
+                - generic [ref=e1111]:
+                  - generic [ref=e1112]: Vị trí
+                  - generic [ref=e1113]: Gò Vấp, Hồ Chí Minh
+                - generic [ref=e1114]:
+                  - generic [ref=e1115]: Diện tích
+                  - generic [ref=e1116]: 54 m²
+                - generic [ref=e1117]:
+                  - generic [ref=e1118]: Kết cấu
+                  - generic [ref=e1119]: 2 tầng · 2 PN · 3 PT
+                - generic [ref=e1120]:
+                  - generic [ref=e1121]: Pháp lý
+                  - generic [ref=e1122]: Đã có sổ
+            - generic [ref=e382]:
+              - paragraph [ref=e383]: Khoảng dao động
+              - paragraph [ref=e384]: Chưa có
+              - paragraph [ref=e385]: Mô hình chưa có khoảng ước lượng được hiệu chỉnh nên ứng dụng không hiển thị khoảng giá.
+    - group [ref=e388]:
+      - generic "keyboard_arrow_down Công cụ phòng thiết kế (không thuộc giao diện sản phẩm)" [ref=e757] [cursor=pointer]:
+        - generic [ref=e390]:
+          - generic [ref=e758]: keyboard_arrow_down
+          - paragraph [ref=e395]: Công cụ phòng thiết kế (không thuộc giao diện sản phẩm)
+      - generic [ref=e761]:
+        - generic [ref=e763]:
+          - paragraph [ref=e767]: Trạng thái giao diện để xem
+          - group [ref=e769]:
+            - combobox "Trạng thái giao diện để xem" [ref=e770]: Ban đầu
+            - button "Open" [ref=e771] [cursor=pointer]
+        - button [active] [ref=e777] [cursor=pointer]:
+          - paragraph [ref=e782]: Điền căn nhà mẫu
+        - paragraph [ref=e787]: "Mô hình thật: Thư mục models/ chưa có tệp mô hình nào. Mọi con số giá trong phòng thiết kế là dữ liệu mẫu."

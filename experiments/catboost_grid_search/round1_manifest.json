@@ -1,0 +1,57 @@
+{
+  "param_grid": {
+    "depth": [
+      4,
+      6,
+      8
+    ],
+    "l2_leaf_reg": [
+      1,
+      3,
+      10
+    ],
+    "random_strength": [
+      0,
+      1,
+      2
+    ]
+  },
+  "base_params": {
+    "iterations": 3000,
+    "depth": 6,
+    "learning_rate": 0.05,
+    "loss_function": "RMSE",
+    "eval_metric": "MAE",
+    "random_seed": 42,
+    "task_type": "CPU",
+    "allow_writing_files": false,
+    "l2_leaf_reg": 3,
+    "random_strength": 1
+  },
+  "best_params": {
+    "depth": 8,
+    "l2_leaf_reg": 3,
+    "random_strength": 2
+  },
+  "best_cv_MAE": 1.025735395673338,
+  "cv": {
+    "n_splits": 3,
+    "shuffle": true,
+    "random_state": 42
+  },
+  "inner_split": {
+    "test_size": 0.15,
+    "random_state": 42
+  },
+  "early_stopping_rounds": 100,
+  "train_sha256": "047f4f8d482f98f1fb2ee397cc51fa41e45b76409cc7f1afc09042f6cbb1926d",
+  "versions": {
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "scikit-learn": "1.9.1",
+    "catboost": "1.2.10",
+    "xgboost": "3.4.1",
+    "lightgbm": "4.7.0"
+  },
+  "search_seconds": null
+}
