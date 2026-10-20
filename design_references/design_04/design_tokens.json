@@ -1,0 +1,39 @@
+{
+  "reference": "design_04",
+  "source": "Screenshot 2026-10-14 091959.jpg",
+  "method": "pixel measurement of one still; no DOM",
+  "units": "capture px unless noted; true CSS px unknown",
+  "colors": {
+    "page_gradient": { "value": "#112258 -> #4468A5 -> #81B7F3", "basis": "measured (top-left to bottom-right)" },
+    "panel_gradient": { "value": "#111D55 -> #4C79B7", "basis": "measured" },
+    "tile": { "value": "#283961", "basis": "measured (translucent over panel)" },
+    "tile_edge": { "value": "#7281A1", "basis": "measured" },
+    "card_dark": { "value": "#18171C", "basis": "measured (72% of lower-card region)" },
+    "frame": { "value": "~#0B0D14", "basis": "measured (dashboard frame)" },
+    "text_primary": { "value": "#FFFFFF", "basis": "observed" },
+    "text_secondary": { "value": "~#B9CED1", "basis": "estimated" },
+    "decimal_dim": { "value": "~40% opacity white", "basis": "estimated" },
+    "accent_gradient": { "value": "#5379E4 -> #719DDC", "basis": "measured (CTA)" },
+    "field": { "value": "#EAEAEA", "basis": "measured (email input)" }
+  },
+  "typography": {
+    "family": { "value": "geometric grotesque, Manrope / General Sans-like", "basis": "inferred" },
+    "case": { "value": "sentence case", "basis": "observed" },
+    "sizes": [
+      { "role": "hero figure", "value": "~42", "weight": 300 },
+      { "role": "headline", "value": "~30", "weight": "400-500" },
+      { "role": "tile figure", "value": "~19", "weight": 400 },
+      { "role": "card title", "value": "~14", "weight": 400 },
+      { "role": "nav", "value": "~11", "weight": 400 },
+      { "role": "label", "value": "~8", "weight": 400 }
+    ]
+  },
+  "radius": { "tile": "~10", "panel": "~18", "card": "~20", "frame": "~22", "controls": "pill / circle", "basis": "estimated" },
+  "borders": { "tile": "1px lighter edge #7281A1", "basis": "measured" },
+  "shadows": { "value": "none observed", "depth": "translucency, light edges, 3D render" },
+  "spacing": { "tile_gap": "~8", "tile_padding": "~10", "panel_padding": "~18", "header_to_hero": "~70", "base_unit": "unknown" },
+  "layout": { "hero": "2 columns ~55/35", "tiles": "2x2", "cards": "3 columns" },
+  "motion": "unknown (still image)",
+  "breakpoints": "unknown",
+  "focus_styles": "unknown"
+}

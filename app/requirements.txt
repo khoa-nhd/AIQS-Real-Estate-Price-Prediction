@@ -1,0 +1,4 @@
+# The Streamlit app only. pandas and altair are installed with Streamlit.
+# Pinned to the version the interface was built and checked with (it uses st.tabs(default=...),
+# horizontal containers and keyed-container CSS classes).
+streamlit==1.65.0

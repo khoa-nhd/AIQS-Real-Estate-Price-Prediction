@@ -1,0 +1,100 @@
+/* design_03 — after the Increase concept: one green material, neon on the rim, signposted sections, show the machine.
+   Tokens: ../../design_references/design_03/design_tokens.json. Placeholders are filled in by app.py. */
+:root{--lab-focus:$ACC_A;--lab-select-bg:$ACC_A;--lab-select-fg:$GROUND;--lab-caret:$ACC_A;--lab-scroll:$CARD}
+.stApp{background:
+  radial-gradient(55% 35% at 25% 12%,rgba(77,244,175,.13),transparent 70%),
+  radial-gradient(45% 30% at 85% 55%,rgba(161,250,106,.07),transparent 70%),
+  radial-gradient(rgba(238,250,250,.28) .8px,transparent 1.4px) 0 0/140px 140px,
+  $GROUND}
+.stApp::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:999990;border:12px solid transparent;
+  border-image:linear-gradient(90deg,$RIM_A,$RIM_B) 1}
+[data-testid="stMainBlockContainer"]{max-width:78rem;padding:2rem 2.6rem 5rem}
+
+.d3-word{font-weight:700;font-size:1.2rem;letter-spacing:.02em;color:$ACC_A;margin:0}
+/* the reference's signpost (bar + square) now marks each field group's real state */
+.d3-head{display:flex;justify-content:space-between;align-items:center;gap:.6rem 1rem;flex-wrap:wrap}
+.d3-status{display:inline-flex;align-items:center;gap:.45rem;background:rgba(14,41,36,.7);border:1px solid rgba(238,250,250,.08);
+  border-radius:7px;padding:.25rem .6rem;font-size:.85rem;line-height:1.3}
+.d3-status.d3-miss .d3-bar,.d3-status.d3-miss .d3-sq{background:#FFD27A}
+.d3-bar{display:inline-block;width:22px;height:7px;border-radius:3px;background:linear-gradient(90deg,$ACC_A,$ACC_B)}
+.d3-sq{display:inline-block;width:7px;height:7px;border-radius:2px;background:$ACC_A}
+.d3-h1{font-size:clamp(2.3rem,4.4vw,3.4rem);font-weight:500;line-height:1.15;margin:1.6rem 0 0;color:$TEXT}
+.d3-h2{font-size:clamp(1.7rem,3vw,2.3rem);font-weight:500;line-height:1.2;margin:1.4rem 0 0}
+.d3-lead{color:$SECONDARY;font-size:1.05rem;line-height:1.6;margin:.7rem 0 0;max-width:38rem}
+.d3-h3{font-size:1.05rem;font-weight:500;margin:0;display:flex;align-items:center;gap:.7rem}
+.d3-k{color:$SECONDARY;font-size:.9rem;margin:0}
+.d3-p{margin:.45rem 0 0;line-height:1.55}
+.d3-small{color:$SECONDARY;font-size:.9rem;line-height:1.5;margin:.4rem 0 0}
+.lab-help{color:$SECONDARY}
+.lab-err{color:#FFB4A8}
+.lab-summary{background:rgba(255,120,100,.10);border:1px solid rgba(255,180,168,.35);border-radius:10px;padding:.9rem 1rem;color:#FFCFC7}
+.lab-summary li{color:$TEXT}
+.lab-banner{background:rgba(18,71,61,.75);border:1px solid rgba(238,250,250,.08);border-radius:10px;padding:.65rem 1rem}
+.lab-banner .lab-ico{color:$ACC_A}
+
+/* icon tile */
+.d3-tile{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:7px;flex:none;
+  background:rgba(77,244,175,.10);border:1px solid rgba(77,244,175,.25);color:$ACC_A}
+.d3-tile .lab-ico{margin:0;font-size:1.15rem}
+
+/* navigation as tab cards; the active one carries the gradient */
+[role="tablist"]{gap:10px;margin:1rem 0 .4rem}
+[role="tablist"]::after{display:none}
+[role="tablist"]>div:not([role="tab"]){display:none}
+[data-testid="stTab"]{height:auto;padding:.7rem 1.2rem;border-radius:10px;background:rgba(18,71,61,.75);border:1px solid rgba(238,250,250,.08);color:$TEXT}
+[data-testid="stTab"][aria-selected="true"]{background:linear-gradient(90deg,$ACC_A,$ACC_B);color:$GROUND;border-color:transparent}
+
+/* cards */
+[class*="st-key-card_"]{background:rgba(18,71,61,.72);border:1px solid rgba(238,250,250,.07);border-radius:10px;padding:20px 20px 22px}
+.d3-card{background:rgba(18,71,61,.72);border:1px solid rgba(238,250,250,.07);border-radius:10px;padding:18px 20px;min-width:0}
+.d3-grid{display:grid;gap:16px;margin-top:1.2rem}
+.d3-grid--3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.d3-grid--4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.d3-v{font-size:1.9rem;font-weight:500;margin:.5rem 0 0;line-height:1.15}
+.d3-ok{color:$ACC_A}
+.d3-miss{color:#FFD27A}
+
+/* buttons */
+[data-testid="stBaseButton-primary"]{background:linear-gradient(90deg,$ACC_A,$ACC_B);color:$GROUND;border:0;border-radius:8px;min-height:3rem;padding:0 1.6rem}
+[data-testid="stBaseButton-primary"] p{font-weight:600}
+[data-testid="stBaseButton-primary"]:hover{filter:brightness(1.06);color:$GROUND}
+[data-testid="stBaseButton-primary"]:disabled{background:$SEC_BTN;color:$SECONDARY}
+[data-testid="stBaseButton-tertiary"]{background:$SEC_BTN;color:$TEXT;border-radius:8px;min-height:3rem;padding:0 1.3rem;text-decoration:none}
+[data-testid="stBaseButton-secondary"]{background:$SEC_BTN;color:$TEXT;border:0;border-radius:8px}
+.st-key-actions{margin-top:.6rem;gap:.8rem}
+
+/* the estimate card: light, floating over the payload panel */
+[class*="st-key-estimate_"]{background:$LIGHT_CARD;color:$LIGHT_TEXT;border-radius:12px;padding:20px 22px 22px;position:relative;z-index:2}
+[class*="st-key-estimate_"] .d3-k,[class*="st-key-estimate_"] .d3-small{color:$LIGHT_MUTED}
+[class*="st-key-estimate_"] [data-testid="stBaseButton-secondary"]{background:$GROUND;color:$TEXT}
+.st-key-estimate_sample{outline:2px dashed $LIGHT_MUTED;outline-offset:-7px}
+.d3-chip{display:inline-flex;align-items:center;border:1px solid $LIGHT_MUTED;border-radius:6px;padding:.15rem .55rem;font-size:.85rem;
+  color:$LIGHT_TEXT;font-weight:500;margin:0}
+.d3-price{font-size:clamp(2.8rem,4.6vw,3.8rem);font-weight:600;line-height:1;margin:.5rem 0 0;font-variant-numeric:tabular-nums}
+.d3-price span{font-size:.36em;font-weight:500;margin-left:.3em}
+.d3-track{height:4px;border-radius:2px;background:linear-gradient(90deg,$ACC_A,$ACC_B);margin:1rem 0 .2rem}
+.d3-note{background:#FFF2CC;color:#5A4300;border-radius:8px;padding:.5rem .7rem;margin:0 0 .8rem;line-height:1.45}
+.d3-state-h{font-size:1.35rem;font-weight:600;margin:0 0 .3rem}
+
+/* payload panel */
+.d3-code{background:$CODE;border:1px solid rgba(77,244,175,.18);border-radius:10px;margin:-10px 14px 0;padding:22px 16px 14px;
+  font-family:'JetBrains Mono',monospace;font-size:.85rem;line-height:1.65;white-space:pre;overflow-x:auto;color:$TEXT;
+  scrollbar-width:thin;scrollbar-color:rgba(77,244,175,.3) transparent}
+.d3-code .k{color:$ACC_A}.d3-code .s{color:#C6F79E}.d3-code .n{color:#7FE3FF}.d3-code .z{color:#7E9A93}.d3-code .c{color:#7E9A93}
+
+/* list rows */
+.d3-rows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:1rem}
+.d3-rowi{display:flex;gap:.8rem;align-items:center;background:rgba(18,71,61,.45);border:1px solid rgba(238,250,250,.06);border-radius:10px;padding:.7rem .9rem}
+.lab-dl dt{color:$SECONDARY}
+.lab-table thead th{color:$SECONDARY;font-weight:500}
+.lab-table tbody tr:nth-child(odd){background:rgba(238,250,250,.03)}
+.lab-table th,.lab-table td{padding:.5rem .6rem}
+[data-testid="stExpander"] details{background:rgba(18,71,61,.6);border:1px solid rgba(238,250,250,.08);border-radius:10px}
+@media (max-width:900px){
+  .stApp::after{border-width:5px}
+  [data-testid="stMainBlockContainer"]{padding:1.2rem 1rem 3rem}
+  .d3-grid--3,.d3-grid--4,.d3-rows{grid-template-columns:1fr}
+}
+
+/* the active tab is marked by its own fill or colour, not Streamlit's underline */
+[data-testid="stTab"] .react-aria-SelectionIndicator{display:none}

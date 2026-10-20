@@ -1,0 +1,44 @@
+{
+  "reference": "design_03",
+  "source": "Screen Recording 2026-10-14 091701.mp4",
+  "method": "frames + pixel measurement; no DOM",
+  "units": "capture px unless noted; true CSS px unknown",
+  "colors": {
+    "background": { "value": "#0E2924", "basis": "measured (hero ground; range #0E2924-#102B26)" },
+    "card": { "value": "#12473D", "basis": "measured (range #12473D-#164B40)" },
+    "code_surface": { "value": "#023030", "basis": "measured" },
+    "text_primary": { "value": "#EEFAFA", "basis": "measured (headline)" },
+    "text_secondary": { "value": "~#9DB8B0", "basis": "estimated (body copy, antialiased samples)" },
+    "secondary_button": { "value": "#384647", "basis": "measured" },
+    "accent_gradient": { "value": "#4DF4AF -> #A1FA6A", "basis": "measured (primary button)" },
+    "frame_gradient": { "value": "#34F3BD -> #A5FA69", "basis": "measured (presentation frame)" },
+    "on_accent": { "value": "~#0E2924", "basis": "estimated (button label)" }
+  },
+  "typography": {
+    "family": { "value": "Exo", "basis": "inferred from letterforms; not confirmed" },
+    "code": { "value": "monospace, unidentified", "basis": "observed" },
+    "case": { "value": "Title Case headings and card titles", "basis": "observed" },
+    "sizes": [
+      { "role": "hero", "value": "~42", "weight": 500, "line_height": "~1.2" },
+      { "role": "section", "value": "~34", "weight": 500 },
+      { "role": "card title", "value": "~15", "weight": 500 },
+      { "role": "body", "value": "~13", "weight": 400 },
+      { "role": "eyebrow", "value": "~9" },
+      { "role": "code", "value": "~8" }
+    ]
+  },
+  "radius": { "icon_tile": "~6", "eyebrow": "~6", "button": "~8", "code_panel": "~8", "card": "~10", "screenshot_frame": "~16", "basis": "estimated" },
+  "shadows": { "value": "none observed", "depth": "green radial glows ~200-300px, estimated" },
+  "components": {
+    "eyebrow_pill": "lime bar (~14x5) + teal square (~5x5) + label, inside a dark rounded pill",
+    "feature_card": "dark translucent card, icon tile top-left, Title Case title, 2-line caption",
+    "list_row": "icon tile + label, faint row background",
+    "tab_card": "title + caption; active one filled with the accent gradient",
+    "marquee_rule": "glowing line with nodes and a centred wordmark"
+  },
+  "spacing": { "card_gap": "~16", "card_padding": "~20", "eyebrow_to_headline": "~10", "section_top": "~80-100", "base_unit": "unknown" },
+  "layout": { "hero": "2 columns", "features": "3-column card grid", "strip": "6 columns", "content_width": "~840 of 900" },
+  "motion": { "observed": ["scroll", "tab cards highlighting in sequence"], "durations": "unknown", "easing": "unknown" },
+  "breakpoints": "unknown",
+  "focus_styles": "unknown"
+}

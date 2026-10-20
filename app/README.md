@@ -17,7 +17,7 @@ Thư mục này chứa code giao diện người dùng, dự kiến sử dụng 
 Từ thư mục gốc repo:
 
 ```bash
-pip install -r requirements.txt
+pip install -r app/requirements.txt
 ```
 
 Sau đó chạy:
@@ -27,6 +27,14 @@ streamlit run app/streamlit_app.py
 ```
 
 Nếu file khởi chạy có tên khác, cập nhật hướng dẫn này.
+
+Cấu trúc:
+
+* `streamlit_app.py`: giao diện (bố cục, theme, markup) theo hướng thiết kế design_01.
+* `styles.css`: CSS của giao diện.
+* `core/`: phần không phụ thuộc giao diện: các trường nhập, nội dung chữ, kiểm tra dữ liệu, trạng thái và `model_interface.py`, nơi duy nhất ứng dụng gọi model.
+
+Hiện repo chưa có model đã lưu, nên ứng dụng chạy ở chế độ xem trước: con số giá là dữ liệu mẫu (trung vị giá của tập huấn luyện) và được ghi rõ là mẫu, không phải dự đoán. Bảng "Công cụ phòng thiết kế" ở cuối trang chỉ dùng để xem các trạng thái giao diện và nên bỏ khi đã có model.
 
 ## 3. Phối hợp với nhóm model
 

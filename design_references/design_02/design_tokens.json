@@ -1,0 +1,36 @@
+{
+  "reference": "design_02",
+  "source": "Screenshot 2026-10-14 0914491.jpg",
+  "method": "pixel measurement of one still; no DOM",
+  "units": "capture px unless noted; original likely ~1440 CSS px wide (unconfirmed)",
+  "colors": {
+    "background": { "value": "#1D1D1D", "basis": "measured, 75.1% of area" },
+    "text_primary": { "value": "~#E9F2EE", "basis": "estimated from quantised #CAEFE2 on headline" },
+    "text_secondary": { "value": "~#8A8A8A", "basis": "estimated (gray second sentence)" },
+    "rule": { "value": "#3C3C3C", "basis": "measured (corner bracket)" },
+    "accent": { "value": "#00EB9B", "basis": "measured (button fill)" },
+    "on_accent": { "value": "~#1D1D1D", "basis": "estimated (button label)" }
+  },
+  "typography": {
+    "display": { "value": "extended grotesque, unidentified", "basis": "inferred" },
+    "body": { "value": "neutral grotesque, Inter-like", "basis": "inferred" },
+    "mono": { "value": "IBM Plex Mono-like", "basis": "inferred" },
+    "sizes": [
+      { "role": "hero", "value": "~58", "weight": "500-600", "line_height": "~1.15" },
+      { "role": "figure", "value": "~42", "weight": 300 },
+      { "role": "body", "value": "~16.5", "weight": 400 },
+      { "role": "button", "value": "~15", "transform": "uppercase" },
+      { "role": "nav", "value": "~14" },
+      { "role": "label", "value": "~9" }
+    ]
+  },
+  "radius": { "value": "0", "basis": "observed on every element" },
+  "shadows": { "value": "none", "basis": "observed" },
+  "frames": { "corner_bracket_arm": "~8", "rule": "dotted or 1px hairline #3C3C3C", "basis": "estimated" },
+  "spacing": { "button_padding": "~10x16", "stat_gap": "~36", "hero_to_stats": "~60", "side_margin": "~52-56", "base_unit": "unknown" },
+  "layout": { "hero": "2 columns ~50/50", "stats": "3 equal columns", "content_width": "~910 of 1014" },
+  "motion": "unknown (still image)",
+  "breakpoints": "unknown",
+  "focus_styles": "unknown",
+  "lower_page": "unknown (not captured)"
+}
