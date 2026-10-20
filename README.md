@@ -62,7 +62,7 @@ AIQS-Real-Estate-Price-Prediction/
 ├── web/                              # ứng dụng web tĩnh cho Vercel
 ├── tests/                            # test_app.py, test_web_model.py
 ├── reports/application_report/       # báo cáo: main.tex và bản PDF
-├── vercel.json, .vercelignore        # cấu hình Vercel (chỉ deploy web/public)
+├── vercel.json                       # cấu hình Vercel (phục vụ web/public)
 ├── Dockerfile, packages.txt          # deploy Docker / Streamlit Community Cloud
 ├── requirements-dev.txt              # thư viện cho notebook và test (gồm app/requirements.txt)
 └── README.md

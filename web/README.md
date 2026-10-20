@@ -17,7 +17,7 @@ Vercel không chạy được máy chủ Streamlit. Nếu chạy mô hình trong
 
 ## Deploy lên Vercel
 
-`vercel.json` ở gốc repo đã cấu hình sẵn: không cài đặt, không build, phục vụ thẳng thư mục `web/public` dưới dạng file tĩnh. `.vercelignore` chỉ cho `vercel.json` và `web/public` vào bản deploy, nên Vercel không nhận nhầm `app/` hay notebook là một dự án khác cần build.
+`vercel.json` ở gốc repo đã cấu hình sẵn: không cài đặt, không build, phục vụ thẳng thư mục `web/public` dưới dạng file tĩnh.
 
 1. Push repo lên GitHub (các tệp trong `web/public/data/` phải được commit, vì Vercel không tự tạo chúng).
 2. Vào https://vercel.com/new, chọn **Import** repo `khoa-nhd/AIQS-Real-Estate-Price-Prediction`.
