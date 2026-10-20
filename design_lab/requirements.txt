@@ -1,3 +1,0 @@
-# Design-lab prototypes only. The production app has no dependency file yet.
-# pandas and altair are installed by Streamlit; nothing else is needed.
-streamlit==1.65.0

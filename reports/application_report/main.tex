@@ -326,7 +326,8 @@ một điểm tham chiếu trước khi đi xem nhà hoặc thương lượng.
     \item \textbf{Kiểm tra và sửa dữ liệu có hệ thống:} phát hiện việc điền khuyết mặt tiền/đường vào
           bằng trung vị quận trên toàn bộ dữ liệu trước khi chia tập (nguy cơ rò rỉ và sai ngữ nghĩa),
           khôi phục giá trị gốc (\texttt{splits\_v2}) và chuẩn hóa tên địa phương (106 $\rightarrow$ 76
-          tên tỉnh/thành trên toàn bộ dữ liệu); phát hiện 11\% tin đăng trùng và 238 tin có giá nghi sai đơn vị.
+          tên tỉnh/thành trên toàn bộ dữ liệu); phát hiện 11\% tin đăng trùng và 238 tin train có dấu hiệu bất thường về
+          đơn giá hoặc diện tích, trong đó có lỗi đơn vị gần như chắc chắn.
     \item \textbf{Vị trí chi tiết từ địa chỉ gốc:} tách lại phường/xã, tên đường, tên dự án đã bị bỏ khi rút
           gọn địa chỉ; đây là thay đổi cải thiện mô hình nhiều nhất, được kiểm chứng qua 3 seed và trên các tin
           không trùng.
@@ -543,7 +544,7 @@ Giá trị thiếu & 9/12 cột thiếu 12--83\%; hướng ban công thiếu 82.
 Điền khuyết trước khi chia tập & Bản \texttt{\_v1} đã điền \texttt{Frontage}/\texttt{Access Road} bằng trung vị quận trên toàn bộ 30\,229 dòng; ô còn thiếu gán 0 và 2.0; 3 giá trị quan sát được ở dòng thiếu quận cũng bị ghi đè. Đã tái lập đúng công thức. & Cao & Khôi phục giá trị gốc thành \texttt{splits\_v2}, giữ nguyên thành viên các tập; điền lại trong pipeline, học trong từng fold. & Chống rò rỉ; mặt tiền = 0 sai ngữ nghĩa. \\
 Tên địa phương không thống nhất & ``Hà Nội.'' và ``Hà Nội'' là hai giá trị; 509 dòng train đổi tên. & Trung bình & Chuẩn hóa NFC, khoảng trắng, dấu chấm cuối: 106 $\rightarrow$ 76 tên tỉnh/thành. & Gộp nhóm bị tách giả tạo. \\
 Tin đăng trùng & 0 dòng trùng toàn bộ ở dữ liệu gốc, nhưng 11.1\% dòng train trùng địa chỉ, diện tích và giá với dòng khác (nhiều khả năng một căn đăng nhiều lần); 10.5\% dòng validation, 10.7\% dòng test có bản trùng trong train. & Cao & Giữ nguyên; đo riêng sai số trên dòng không trùng; đề xuất chia tập theo nhóm tin. & Bản trùng dễ đoán nên điểm hơi lạc quan; chưa xác minh được là cùng căn. \\
-Giá trị bất thường & 238 dòng train (1.3\%) có dấu hiệu: đơn giá $< 1/3$ hoặc $> 3$ lần mặt bằng quận (151), diện tích $< 15$ hoặc $> 400$~\mtwo{} (90). Có lỗi đơn vị gần như chắc chắn: nhà 3 tầng ghi 4~\mtwo, giá 6.4~\ty. & Trung bình & Đánh dấu, không xóa; cần nhóm dữ liệu xác minh nguồn. & Không xóa theo sai số mô hình; bỏ qua các dòng này $R^2$ OOF chỉ tăng 0.642 $\rightarrow$ 0.652. \\
+Giá trị bất thường & 238 dòng train (1.3\%) có ít nhất một dấu hiệu: đơn giá $< 1/3$ hoặc $> 3$ lần mặt bằng quận (151), diện tích $< 15$ hoặc $> 400$~\mtwo{} (90), giá ở mức sàn/trần (7); một dòng có thể có nhiều dấu hiệu. Có lỗi đơn vị gần như chắc chắn: nhà 3 tầng ghi 4~\mtwo, giá 6.4~\ty. & Trung bình & Đánh dấu, không xóa; cần nhóm dữ liệu xác minh nguồn. & Không xóa theo sai số mô hình; bỏ qua các dòng này $R^2$ OOF chỉ tăng 0.642 $\rightarrow$ 0.652. \\
 Lệch mẫu & Giá chỉ trong 1--11.5~\ty; 74\% tin ở HN và TP.HCM; 226/302 quận có $< 30$ tin train. & Cao & Ghi rõ phạm vi áp dụng; cảnh báo trong app. & Mô hình không có cơ sở ngoài phạm vi này. \\
 Nguy cơ rò rỉ & \texttt{row\_id}, đơn giá/m\textsuperscript{2} tính từ \texttt{Price}. & Cao & Loại khỏi đặc trưng; khóa test và calibration. & Chỉ dùng thông tin có lúc dự đoán. \\
 \bottomrule
