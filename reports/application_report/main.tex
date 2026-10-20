@@ -1349,7 +1349,7 @@ Người bán, môi giới: khai báo đủ số tầng, WC, đường vào & Th
 \begin{itemize}
     \item \textbf{Trước khi phát hành:} cấu hình đã khóa và đã đánh giá một lần trên test ($R^2 = 0.699$); khoảng dự
           đoán 80\% đã hiệu chỉnh trên calibration và đo độ phủ theo nhóm giá (notebook 04). Còn lại: chuyển mã tiền
-          xử lý vào \texttt{src/} để lưu mô hình bằng pickle/joblib thường thay cho cloudpickle. Ứng dụng đã nạp mô
+          xử lý từ notebook ra một module Python để lưu mô hình bằng pickle/joblib thường thay cho cloudpickle. Ứng dụng đã nạp mô
           hình, có ô nhập phường/xã, đường, dự án và hiện khoảng dao động. Mỗi khi đổi mô hình phải chạy lại notebook
           04 (khoảng gắn với mã băm của mô hình), \nolinkurl{web/scripts/export_web_data.py} và bộ kiểm thử để cả hai
           bản ứng dụng dùng đúng mô hình mới. Nếu refit trên train + validation thì không chấm lại test.

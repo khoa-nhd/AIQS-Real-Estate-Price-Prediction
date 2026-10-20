@@ -13,7 +13,7 @@ Thư mục này chứa dataset sử dụng trong dự án Dự đoán giá bất
 1. Ghi lại nguồn dataset, đường dẫn tải, ngày tải và điều kiện sử dụng.
 2. Lưu dataset gốc vào `raw/`.
 3. Khám phá và kiểm tra dữ liệu bằng notebook trong `notebooks/`.
-4. Thực hiện làm sạch và xử lý dữ liệu bằng code trong `src/`.
+4. Làm sạch và chia tập bằng notebook (`notebooks/cleandata_estate_aiqs.ipynb`, `notebooks/01_data_handoff_and_split.ipynb`).
 5. Lưu dữ liệu đã xử lý vào `processed/`.
 6. Ghi lại những thay đổi quan trọng để thành viên khác có thể tái tạo quy trình.
 

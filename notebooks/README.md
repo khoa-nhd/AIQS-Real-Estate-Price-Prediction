@@ -17,7 +17,7 @@ Có thể bổ sung notebook khi cần. Không bắt buộc tạo tất cả nga
 2. Ghi mục tiêu, nguồn dữ liệu và phương pháp trong Markdown cell.
 3. Chạy notebook từ đầu đến cuối trước khi gửi Pull Request.
 4. Sử dụng đường dẫn tương đối từ thư mục gốc repo.
-5. Khi code trở nên ổn định và cần tái sử dụng, chuyển code sang `src/`.
+5. Khi code trở nên ổn định và cần tái sử dụng, chuyển code ra file `.py` (như `app/core/`, `web/scripts/`).
 
 ## 3. Quy tắc cộng tác
 
