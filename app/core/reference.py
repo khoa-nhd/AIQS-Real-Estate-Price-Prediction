@@ -33,10 +33,10 @@ NUMERIC = ("Area", "Frontage", "Access Road", "Floors", "Bedrooms", "Bathrooms")
 CATEGORICAL = ("House direction", "Balcony direction", "Legal status", "Furniture state")
 COMPASS = ("Đông", "Tây", "Nam", "Bắc", "Đông - Bắc", "Đông - Nam", "Tây - Bắc", "Tây - Nam")
 
-# Lab-only rule. The raw location columns contain junk strings and duplicate
-# spellings ("Hồ Chí Minh giá 2tỷ380", "TP. HCM", "Quận Bình Tân" next to
-# "Bình Tân"). Only city/district pairs with at least this many training rows
-# are offered. The production list must come from the model's own artifact.
+# The raw location columns contain junk strings and duplicate spellings
+# ("Hồ Chí Minh giá 2tỷ380", "TP. HCM", "Quận Bình Tân" next to "Bình Tân").
+# Only city/district pairs with at least this many training rows are offered:
+# that drops those strings, and places the model has barely seen.
 MIN_ROWS_PER_LOCATION = 10
 PRICE_BIN_WIDTH = 0.5
 

@@ -4,8 +4,8 @@ Run from the repository root:
     streamlit run app/streamlit_app.py
 
 The look is the chosen design_01 direction (bento, night violet, mint actions);
-its source is design_references/design_01/ (design_spec.md, design_tokens.json).
-Theme, layout and markup live here; behaviour comes from app/core.
+its colour tokens are TOKENS below. Theme, layout and markup live here;
+behaviour comes from app/core. Deploying: see app/README.md (Python 3.14 only).
 """
 import sys
 from bisect import bisect_left
@@ -19,6 +19,7 @@ import streamlit as st  # noqa: E402
 
 from core import content, formatting as fmt, schema, state, widgets as ui  # noqa: E402
 from core.evaluation import load_cross_validation, load_final_evaluation  # noqa: E402
+from core.model_interface import INTERVAL_LABEL, load_interval  # noqa: E402
 
 TOKENS = dict(
     GUTTER="#030208", GROUND="#0C0E1D", PANEL_TOP="#151329", PANEL_BOTTOM="#0A121F",
@@ -82,9 +83,10 @@ def bands(values: dict) -> str:
     ) + "</div>"
 
 
-def market(price_ty: float, reference) -> str:
+def market(price_ty: float, reference, interval=None) -> str:
     """Where this estimate sits among the training prices: the real histogram, a pin, and one sentence
     saying what share of the houses cost less. No second pair of numbers sits next to the price.
+    With an interval, its range is shaded behind the bars.
 
     The pin starts from the estimate shown before this one (styles.css animates from --from-pin), so a new
     estimate visibly moves from the old one along the market.
@@ -114,11 +116,13 @@ def market(price_ty: float, reference) -> str:
         f'title="{ui.e(content.MARKET_BIN.format(low=fmt.number(a), high=fmt.number(b), n=fmt.count(n)))}"></span>'
         for k, (a, b, n) in enumerate(bins)
     )
+    band = (f'<div class="d1-market-range" style="left:{at(interval[0]):.2f}%;right:{100 - at(interval[1]):.2f}%"></div>'
+            if interval else "")
     return (
         f'<div class="d1-market"><p class="d1-k">{ui.e(label)}</p>'
         f'<div class="d1-market-plot" role="img" aria-label="{ui.e(label)}. {ui.e(note)}." '
         f'style="--pin:{pin:.2f}%;--from-pin:{previous:.2f}%">'
-        f'<div class="d1-market-bars">{cells}</div><div class="d1-market-pin"></div></div>'
+        f'{band}<div class="d1-market-bars">{cells}</div><div class="d1-market-pin"></div></div>'
         # the axis names the data's real lowest and highest prices, at their places (the last bin runs past the max)
         f'<div class="d1-market-axis"><span style="left:{at(p["min"]):.2f}%">{ui.e(content.MARKET_AXIS.format(value=fmt.number(p["min"])))}</span>'
         f'<span style="right:{100 - at(p["max"]):.2f}%">{ui.e(content.MARKET_AXIS.format(value=fmt.number(p["max"])))}</span></div>'
@@ -168,7 +172,7 @@ def result_panel(view: state.Page, reference) -> None:
             + trust() +
             f'<div class="d1-fact--wide"><p class="d1-k">{ui.e(slots["provenance_label"])}</p><p class="d1-small">{ui.e(slots["provenance"])}</p></div>'
             "</div>"
-            + market(price_ty, reference) +
+            + market(price_ty, reference, view.outcome.prediction.interval) +
             "</div>"
         )
 
@@ -183,6 +187,19 @@ def trust() -> str:
     return (f'<div><p class="d1-k">{ui.e(content.TRUST_LABEL)}</p>'
             f'<p class="d1-fact-v">{ui.e(content.TRUST_VALUE.format(mae=fmt.number(mae, 2, trim=False)))}</p>'
             f'<p class="d1-small">{ui.e(content.TRUST_TEXT.format(n=fmt.count(final.test_rows)))}</p></div>')
+
+
+def interval_summary(band) -> str:
+    """The calibration record in one paragraph: what the range was learned on and how often it held."""
+    record = band.record
+    method = record["method"]
+    return content.EVAL_INTERVAL_TEXT.format(
+        cal=fmt.count(record["fit_on"]["rows"]),
+        val=fmt.percent(record["validation"]["results"][method]["coverage"]),
+        test=fmt.percent(record["test"]["coverage"]),
+        test_new=fmt.percent(record["test"]["coverage_new_listings"]),
+        width=fmt.number(record["test"]["mean_width"], 1, trim=False),
+    )
 
 
 def page_head(title: str, lead: str) -> None:
@@ -246,10 +263,15 @@ def evaluation(reference) -> None:
                 mae_text = fmt.number(mae, 2, trim=False)
                 note = content.ACC_NOTE.format(twin=fmt.percent(final.twin_share),
                                                mae_new=fmt.number(final.test_new.get("MAE", mae), 2, trim=False))
+                band = load_interval()
+                band_note = (content.ACC_INTERVAL.format(n=fmt.count(band.rows), coverage=fmt.percent(band.coverage),
+                                                         width=fmt.number(band.record["test"]["mean_width"], 1, trim=False))
+                             if band else "")
                 st.html(f'<p class="d1-k">{ui.e(content.TRUST_LABEL)}</p>'
                         f'<p class="d1-figure">{ui.e(content.TRUST_VALUE.format(mae=mae_text))}</p>'
                         f'<p class="d1-p d1-measure">{ui.e(content.ACC_TEXT.format(n=fmt.count(final.test_rows), mae=mae_text, median=fmt.price(median), share=fmt.percent(mae / median)))}</p>'
-                        f'<p class="d1-small">{ui.e(note)}</p>')
+                        + (f'<p class="d1-p d1-measure">{ui.e(band_note)}</p>' if band_note else "")
+                        + f'<p class="d1-small">{ui.e(note)}</p>')
     if cv.status != "available" or cv.summary is None or cv.summary.empty:
         return
     # every measurement of the model in use, then the course's candidate comparison, one click away
@@ -263,6 +285,11 @@ def evaluation(reference) -> None:
                 st.html(f'<h2 class="d1-h2" style="margin-top:0">{ui.e(content.EVAL_MODEL_HEADING)}</h2>'
                         + '<div class="d1-model-table">' + ui.table(content.EVAL_MODEL_COLUMNS, rows) + "</div>"
                         + f'<p class="d1-small">{ui.e(content.EVAL_SOURCE.format(path=content.EVAL_MODEL_SOURCE))}</p>')
+                band = load_interval()
+                if band:
+                    st.html(f'<h2 class="d1-h2">{ui.e(content.EVAL_INTERVAL_HEADING)}</h2>'
+                            f'<p class="d1-small">{ui.e(interval_summary(band))}</p>'
+                            f'<p class="d1-small">{ui.e(content.EVAL_SOURCE.format(path=INTERVAL_LABEL))}</p>')
             st.html(f'<h2 class="d1-h2">{ui.e(content.EVAL_CV_HEADING)}</h2>'
                     f'<p class="d1-small">{ui.e(content.EVAL_CV_KIND)} {ui.e(copy["folds"])}</p>')
             # teal marks the lowest-error candidate in the chart and its row in the table

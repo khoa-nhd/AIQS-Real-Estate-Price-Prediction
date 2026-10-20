@@ -1,0 +1,106 @@
+{
+ "created": "2026-10-20",
+ "notebook": "notebooks/04_calibration.ipynb",
+ "model": {
+  "path": "models/candidates/final_v2_2026-10-20/house_price_ensemble.pkl",
+  "sha256": "abcde93a531f507e116c4e391c7e2cfead8da5f526e040c1d4c2796f82a016c0"
+ },
+ "target_coverage": 0.8,
+ "price_range": [
+  1.0,
+  11.5
+ ],
+ "fit_on": {
+  "split": "data/processed/splits_v2/calibration.csv",
+  "rows": 3023
+ },
+ "method": "grouped",
+ "params": {
+  "method": "grouped",
+  "edges": [
+   4.149641541881703,
+   5.472928407998952,
+   6.572855575703412,
+   7.532194169865837
+  ],
+  "groups": [
+   {
+    "n": 605,
+    "q_lo": -1.1452327531667916,
+    "q_hi": 0.6977062840321837
+   },
+   {
+    "n": 604,
+    "q_lo": -1.3758047908498283,
+    "q_hi": 1.3867617447769955
+   },
+   {
+    "n": 605,
+    "q_lo": -1.5057423803665833,
+    "q_hi": 1.5399051683294518
+   },
+   {
+    "n": 604,
+    "q_lo": -1.5042703556614958,
+    "q_hi": 1.9869406769629006
+   },
+   {
+    "n": 605,
+    "q_lo": -1.526303339265434,
+    "q_hi": 1.4049192072030028
+   }
+  ]
+ },
+ "rules": {
+  "interval": "[pred + q_lo, pred + q_hi] theo nhóm giá dự đoán (grouped) hoặc pred ± q (constant); cắt về price_range; luôn chứa pred",
+  "selection": "độ rộng trung bình nhỏ nhất trong các phương pháp có độ phủ validation >= 78% và mọi nhóm >= 70%"
+ },
+ "validation": {
+  "rows": 4535,
+  "twin_share": 0.1051819184123484,
+  "results": {
+   "constant": {
+    "coverage": 0.8070562293274531,
+    "coverage_new_listings": 0.7917693445046821,
+    "group_coverage": [
+     0.9069767441860465,
+     0.8140068886337543,
+     0.7794759825327511,
+     0.7337733773377337,
+     0.8023504273504274
+    ],
+    "mean_width": 2.8237763740929274,
+    "median_width": 2.8372768048875123
+   },
+   "grouped": {
+    "coverage": 0.8079382579933848,
+    "coverage_new_listings": 0.7925086249383932,
+    "group_coverage": [
+     0.8039867109634552,
+     0.8059701492537313,
+     0.8056768558951966,
+     0.812981298129813,
+     0.8108974358974359
+    ],
+    "mean_width": 2.8113091403158954,
+    "median_width": 2.9312225464684367
+   }
+  }
+ },
+ "test": {
+  "rows": 4535,
+  "twin_share": 0.1071664829106946,
+  "coverage": 0.8,
+  "coverage_new_listings": 0.7826623857742653,
+  "group_coverage": [
+   0.8155784650630011,
+   0.800650054171181,
+   0.7566137566137566,
+   0.8231292517006803,
+   0.8070175438596491
+  ],
+  "mean_width": 2.8128008553995416,
+  "median_width": 2.9312225464684367,
+  "note": "Tập test đã được dùng một lần ở notebook 03 (C67) để đo sai số điểm; độ phủ của khoảng được đo một lần ở đây, sau khi phương pháp đã khóa ở C05."
+ }
+}
