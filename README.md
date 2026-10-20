@@ -64,6 +64,7 @@ AIQS-Real-Estate-Price-Prediction/
 ├── reports/application_report/       # báo cáo: main.tex và bản PDF
 ├── vercel.json, .vercelignore        # cấu hình Vercel (chỉ deploy web/public)
 ├── Dockerfile, packages.txt          # deploy Docker / Streamlit Community Cloud
+├── requirements-dev.txt              # thư viện cho notebook và test (gồm app/requirements.txt)
 └── README.md
 ```
 
@@ -73,11 +74,10 @@ AIQS-Real-Estate-Price-Prediction/
 
 ```bash
 py -3.14 -m venv .venv
-.venv\Scripts\python -m pip install -r app/requirements.txt
-.venv\Scripts\python -m pip install catboost==1.2.10 matplotlib==3.11.2 ipykernel nbclient
+.venv\Scripts\python -m pip install -r requirements-dev.txt
 ```
 
-`app/requirements.txt` ghim đúng các phiên bản mà mô hình được lưu cùng: numpy 2.5.3, pandas 3.0.6, scikit-learn 1.9.1, scipy 1.18.1, xgboost 3.4.1, lightgbm 4.7.0, cloudpickle 3.1.2. Dòng thứ hai cài thêm thư viện cho notebook. Các notebook chạy trên Colab (`cleandata_estate_aiqs`, `boxplot_price_aiqs`) dùng thêm seaborn.
+`app/requirements.txt` ghim đúng các phiên bản mà mô hình được lưu cùng: numpy 2.5.3, pandas 3.0.6, scikit-learn 1.9.1, scipy 1.18.1, xgboost 3.4.1, lightgbm 4.7.0, cloudpickle 3.1.2. `requirements-dev.txt` gồm toàn bộ `app/requirements.txt` cộng thư viện cho notebook và test (catboost, matplotlib, Jupyter kernel). Các notebook chạy trên Colab (`cleandata_estate_aiqs`, `boxplot_price_aiqs`) dùng thêm seaborn.
 
 **Thứ tự notebook:**
 1. `cleandata_estate_aiqs`.
