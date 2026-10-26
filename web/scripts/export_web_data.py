@@ -262,7 +262,7 @@ def export_reference() -> dict:
         "locationsOffered": reference.locations_offered,
         "evaluation": {
             "test": final.test, "testNew": final.test_new, "validation": final.validation, "cv": final.cv,
-            "testRows": final.test_rows, "twinShare": final.twin_share, "passed": final.passed,
+            "testRows": final.test_rows, "newShare": final.new_share, "passed": final.passed,
         },
         "candidates": {
             "rows": cv.summary.to_dict("records") if cv.status == "available" else [],

@@ -2,8 +2,8 @@
 
 Nothing here is typed in. Two kinds of results exist:
 - the cross-validation the team ran while comparing candidate pipelines (notebook 03, Phần A);
-- the locked model's own figures: cross-validation, validation and the single evaluation
-  on the test split (notebook 03, C63, C64 and C67).
+- the model in use: cross-validation, validation and test, all split by groups of listings of the
+  same house (notebook 05). The configuration was chosen in notebook 03.
 """
 from __future__ import annotations
 
@@ -21,10 +21,10 @@ CV_SUMMARY = CV_DIR / "recovered_model_cv_summary.csv"
 CV_FOLDS = CV_DIR / "recovered_model_cv_folds.csv"
 CV_SUMMARY_LABEL = "experiments/model_comparison_cv/recovered_model_cv_summary.csv"
 
-FINAL_DIR = ROOT / "experiments" / "final_selection"
+FINAL_DIR = ROOT / "experiments" / "group_split"
 TEST_RESULT = FINAL_DIR / "test_evaluation.json"
-TEST_RESULT_LABEL = "experiments/final_selection/test_evaluation.json"
-BLEND_SUMMARY = ROOT / "experiments" / "ensemble_oof" / "blend_summary.csv"
+TEST_RESULT_LABEL = "experiments/group_split/test_evaluation.json"
+GROUP_CV_SUMMARY = FINAL_DIR / "cv_summary.csv"  # 3-fold CV by groups; the ensemble's row is "Ensemble"
 
 REQUIRED_COLUMNS = ("model", "mean_cv_MAE", "mean_cv_RMSE", "mean_cv_R2")
 
@@ -62,16 +62,17 @@ def load_cross_validation() -> CrossValidation:
 
 @dataclass(frozen=True)
 class FinalEvaluation:
-    """The locked model's figures; each metrics dict holds MAE, RMSE and R2 (tỷ đồng for the first two)."""
+    """The model's figures; each metrics dict holds MAE, RMSE and R2 (tỷ đồng for the first two)."""
 
     status: str  # available | missing | unreadable
     problem: str = ""
     test: dict[str, float] = field(default_factory=dict)
-    test_new: dict[str, float] = field(default_factory=dict)  # test rows with no duplicate listing in training
+    # test rows with no listing at the same address and area in training (the broadest notion of "same house")
+    test_new: dict[str, float] = field(default_factory=dict)
     validation: dict[str, float] = field(default_factory=dict)
     cv: dict[str, float] = field(default_factory=dict)
     test_rows: int = 0
-    twin_share: float = 0.0
+    new_share: float = 0.0  # share of test rows behind test_new
     passed: bool = False  # the project's acceptance rule: R² on test of at least 0.7
 
 
@@ -83,21 +84,17 @@ def load_final_evaluation() -> FinalEvaluation:
         test = json.loads(TEST_RESULT.read_text(encoding="utf-8"))
         manifest = json.loads(MODEL_MANIFEST.read_text(encoding="utf-8")) if MODEL_MANIFEST.is_file() else {}
         cv: dict[str, float] = {}
-        weight = manifest.get("weights", {}).get("XGBoost")
-        if BLEND_SUMMARY.is_file() and weight is not None:
-            blend = pd.read_csv(BLEND_SUMMARY)
-            row = blend.loc[(blend["xgb_weight"] - weight).abs() < 1e-9]
-            if len(row) == 1:
-                cv = {"MAE": float(row["mean_cv_MAE"].iloc[0]), "RMSE": float(row["mean_cv_RMSE"].iloc[0]),
-                      "R2": float(row["mean_cv_R2"].iloc[0])}
+        if GROUP_CV_SUMMARY.is_file():
+            row = pd.read_csv(GROUP_CV_SUMMARY).set_index("model").loc["Ensemble"]
+            cv = {m: float(row[f"mean_cv_{m}"]) for m in ("MAE", "RMSE", "R2")}
         return FinalEvaluation(
             "available",
             test=test["metrics"],
-            test_new=test.get("metrics_without_twins", {}),
+            test_new=test.get("metrics_no_address_area_match", {}),
             validation=manifest.get("metrics", {}).get("validation", {}),
             cv=cv,
             test_rows=int(test.get("rows", 0)),
-            twin_share=float(test.get("twin_share", 0.0)),
+            new_share=float(test.get("no_address_area_match_share", 0.0)),
             passed=bool(test.get("acceptance_R2_at_least_0_7", False)),
         )
     except Exception as exc:

@@ -21,12 +21,11 @@ RUN pip install -r app/requirements.txt
 
 # Only the files the app reads at run time.
 COPY app/ app/
-COPY models/candidates/final_v2_2026-10-20/ models/candidates/final_v2_2026-10-20/
+COPY models/candidates/final_v3_group_2026-10-26/ models/candidates/final_v3_group_2026-10-26/
 COPY data/vietnam_housing_dataset.csv data/
-COPY data/processed/splits_v2/train.csv data/processed/splits_v2/
-COPY experiments/final_selection/test_evaluation.json experiments/final_selection/
-COPY experiments/calibration/prediction_interval.json experiments/calibration/
-COPY experiments/ensemble_oof/blend_summary.csv experiments/ensemble_oof/
+COPY data/processed/splits_v3/train.csv data/processed/splits_v3/
+COPY experiments/group_split/test_evaluation.json experiments/group_split/prediction_interval.json \
+     experiments/group_split/cv_summary.csv experiments/group_split/
 COPY experiments/model_comparison_cv/recovered_model_cv_summary.csv \
      experiments/model_comparison_cv/recovered_model_cv_folds.csv \
      experiments/model_comparison_cv/

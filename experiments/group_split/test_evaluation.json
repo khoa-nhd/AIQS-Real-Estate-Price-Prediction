@@ -1,0 +1,44 @@
+{
+ "status": "group_split_reevaluation",
+ "source": "notebooks/05_group_split.ipynb, C07",
+ "split": "data/processed/splits_v3 (theo nhóm tin cùng căn nhà)",
+ "model_sha256": "3d0859cf83ecc588e2b5c0470894d9f411e615587062f2434ce7e34cc6ec5001",
+ "rows": 4274,
+ "metrics": {
+  "MAE": 0.9207528179920396,
+  "RMSE": 1.2475048150875896,
+  "R2": 0.6864709706409529
+ },
+ "components": {
+  "XGBoost": {
+   "MAE": 0.9265055874925827,
+   "RMSE": 1.258540378765298,
+   "R2": 0.6808994118615617
+  },
+  "LightGBM": {
+   "MAE": 0.9311956362716451,
+   "RMSE": 1.2579864509217022,
+   "R2": 0.6811802448086832
+  }
+ },
+ "metrics_no_address_area_match": {
+  "MAE": 0.9791482293963808,
+  "RMSE": 1.3176109721454405,
+  "R2": 0.6603900884162559
+ },
+ "no_address_area_match_share": 0.7788956481048198,
+ "previous_random_split": {
+  "metrics": {
+   "MAE": 0.8916683868309703,
+   "RMSE": 1.2187799388846823,
+   "R2": 0.6986050562104236
+  },
+  "metrics_without_twins": {
+   "MAE": 0.9343126330352194,
+   "RMSE": 1.2658621089774462,
+   "R2": 0.6770990177473579
+  }
+ },
+ "acceptance_R2_at_least_0_7": false,
+ "note": "Tập test mới (splits_v3) gần như cùng các dòng với tập test đã dùng ở notebook 03 (C67); đây là lần đánh giá lại theo phản biện, cấu hình không đổi."
+}

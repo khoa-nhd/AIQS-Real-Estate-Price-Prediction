@@ -1,8 +1,8 @@
 """The one seam between the interface and the model.
 
 Every UI variant calls the model through this module and nowhere else.
-ProjectModelGateway loads the locked model exported by notebook 03 (C68):
-models/candidates/final_v2_2026-10-20/house_price_ensemble.pkl, an equal-weight
+ProjectModelGateway loads the locked model exported by notebook 05 (C10; configuration from notebook 03):
+models/candidates/final_v3_group_2026-10-26/house_price_ensemble.pkl, an equal-weight
 XGBoost + LightGBM ensemble. The file is a pickle, so it is only loaded when its
 SHA-256 matches the manifest written next to it, and only on the Python and
 library versions it was saved with.
@@ -27,16 +27,16 @@ from . import content, formatting as fmt
 from .reference import ROOT, Reference
 
 MODELS_DIR = ROOT / "models"
-MODEL_DIR = MODELS_DIR / "candidates" / "final_v2_2026-10-20"
+MODEL_DIR = MODELS_DIR / "candidates" / "final_v3_group_2026-10-26"
 MODEL_FILE = MODEL_DIR / "house_price_ensemble.pkl"
 MODEL_MANIFEST = MODEL_DIR / "manifest.json"
-MODEL_LABEL = "models/candidates/final_v2_2026-10-20"
+MODEL_LABEL = "models/candidates/final_v3_group_2026-10-26"
 # cloudpickle stored the notebook's own classes and functions by value, as Python 3.14 bytecode,
 # so the file only loads on the Python version that wrote it. The manifest records the library versions.
 MODEL_PYTHON = (3, 14)
-# The 80% range around an estimate, from notebook 04 (split conformal on the calibration split).
-INTERVAL_FILE = ROOT / "experiments" / "calibration" / "prediction_interval.json"
-INTERVAL_LABEL = "experiments/calibration/prediction_interval.json"
+# The 80% range around an estimate: notebook 04's method, refitted in notebook 05 on the group-split calibration set.
+INTERVAL_FILE = ROOT / "experiments" / "group_split" / "prediction_interval.json"
+INTERVAL_LABEL = "experiments/group_split/prediction_interval.json"
 
 log = logging.getLogger(__name__)
 
@@ -198,7 +198,7 @@ def model_frame(features: dict[str, object]) -> pd.DataFrame:
 
 
 class ProjectModelGateway:
-    """The real project model: the locked ensemble exported by notebook 03."""
+    """The real project model: the locked ensemble exported by notebook 05."""
 
     def status(self) -> ModelStatus:
         loaded = load_project_model()

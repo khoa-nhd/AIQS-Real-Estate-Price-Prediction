@@ -1,0 +1,215 @@
+{
+ "file": "house_price_ensemble.pkl",
+ "sha256": "3d0859cf83ecc588e2b5c0470894d9f411e615587062f2434ce7e34cc6ec5001",
+ "bytes": 13819369,
+ "format": "cloudpickle",
+ "class": "HousePriceEnsemble — predict(DataFrame) -> numpy array, tỷ VND",
+ "input_columns": [
+  "Area",
+  "Frontage",
+  "Access Road",
+  "House direction",
+  "Balcony direction",
+  "Floors",
+  "Bedrooms",
+  "Bathrooms",
+  "Legal status",
+  "Furniture state",
+  "City",
+  "District",
+  "Address (tùy chọn)"
+ ],
+ "verified": "nạp lại trong cùng tiến trình cho dự đoán trùng khớp trên test",
+ "name": "AIQS house price ensemble (splits_v3, chia theo nhóm tin cùng căn nhà)",
+ "created": "2026-10-26",
+ "source": "notebooks/05_group_split.ipynb, C05 (fit) và C10 (xuất); cấu hình từ notebook 03",
+ "target": "Price — tổng giá, tỷ VND (giá rao năm 2024)",
+ "trained_on": "data/processed/splits_v3/train.csv (18880 dòng)",
+ "split": {
+  "dir": "data/processed/splits_v3",
+  "created": "2026-10-26",
+  "source": "notebooks/05_group_split.ipynb, C01",
+  "group_definition": "cùng địa chỉ (NFC, chữ thường, gộp khoảng trắng) và cùng diện tích, và cùng giá hoặc cùng số tầng, phòng ngủ, phòng tắm (khi cả ba đều có); nối bắc cầu (union-find)",
+  "assignment": "mỗi nhóm về tập chứa nhiều tin nhất của nó trong splits_v2; hòa thì chọn ngẫu nhiên (seed 42)",
+  "groups": 25602,
+  "rows_in_multi_listing_groups": 0.24407026365410697,
+  "rows_moved_from_v2": 2345,
+  "rows": {
+   "train": 18880,
+   "validation": 4268,
+   "calibration": 2807,
+   "test": 4274
+  },
+  "sha256": {
+   "train": "8cf8f6e6b0bd4ab7ceb7b7dd1ffb371baf80b8c069c0d72026416be5877f2752",
+   "validation": "60c113da8eb21cf5336293c73c6ddfd06411bae45c9a0a37bf1667aa0d0cd97b",
+   "calibration": "21bbd83d23266d849ecceb2d940b38e9c9debc43b488337b7d8956ccb04009cf",
+   "test": "0f9f4b8d7497d5e3cf78958097d03142114c61f616e52c0803ed43b457a8b6e7"
+  }
+ },
+ "weights": {
+  "XGBoost": 0.5,
+  "LightGBM": 0.5
+ },
+ "components": {
+  "XGBoost": {
+   "params": {
+    "n_estimators": 1043,
+    "max_depth": 9,
+    "learning_rate": 0.05,
+    "objective": "reg:squarederror",
+    "eval_metric": "mae",
+    "tree_method": "hist",
+    "subsample": 0.8,
+    "colsample_bytree": 0.7,
+    "random_state": 42,
+    "n_jobs": -1,
+    "min_child_weight": 1
+   },
+   "preprocessing": {
+    "data": "splits_v2",
+    "blocks": [
+     "project_te",
+     "street_te",
+     "ward_te"
+    ],
+    "block_definitions": {
+     "project_te": "Target Encoding cho City_Project (dự án lấy từ Address)",
+     "street_te": "Target Encoding cho City_District_Street (đường lấy từ Address)",
+     "ward_te": "Target Encoding cho City_District_Ward (phường/xã lấy từ Address)"
+    },
+    "columns": {
+     "numeric": [
+      "Area",
+      "Floors",
+      "Bedrooms",
+      "Bathrooms"
+     ],
+     "frontage_access": [
+      "Frontage",
+      "Access Road"
+     ],
+     "one_hot": [
+      "House direction",
+      "Balcony direction",
+      "Legal status",
+      "Furniture state",
+      "City",
+      "District"
+     ],
+     "target_encoded": [
+      "City_District_Ward",
+      "City_Project",
+      "City_District_Street"
+     ],
+     "area_x_location": []
+    },
+    "numeric": "StandardScaler -> SimpleImputer(mean)",
+    "frontage_access": "StandardScaler -> SimpleImputer(median)",
+    "one_hot": "SimpleImputer(most_frequent) -> OneHotEncoder(handle_unknown=ignore)",
+    "target_encoded": "SimpleImputer(constant='__MISSING__') -> TargetEncoder(continuous, smooth=auto, KFold(5, shuffle=True, random_state=42))"
+   },
+   "n_estimators": 1043
+  },
+  "LightGBM": {
+   "params": {
+    "objective": "regression",
+    "metric": "mae",
+    "n_estimators": 683,
+    "learning_rate": 0.05,
+    "num_leaves": 63,
+    "max_depth": -1,
+    "min_child_samples": 5,
+    "subsample": 1.0,
+    "colsample_bytree": 0.7,
+    "random_state": 42,
+    "n_jobs": -1,
+    "verbosity": -1
+   },
+   "preprocessing": {
+    "data": "splits_v2",
+    "blocks": [
+     "fa_native",
+     "project_te",
+     "street_te",
+     "ward_te"
+    ],
+    "block_definitions": {
+     "fa_native": "không điền; XGBoost/LightGBM tự học hướng rẽ cho giá trị thiếu",
+     "project_te": "Target Encoding cho City_Project (dự án lấy từ Address)",
+     "street_te": "Target Encoding cho City_District_Street (đường lấy từ Address)",
+     "ward_te": "Target Encoding cho City_District_Ward (phường/xã lấy từ Address)"
+    },
+    "columns": {
+     "numeric": [
+      "Area",
+      "Floors",
+      "Bedrooms",
+      "Bathrooms"
+     ],
+     "frontage_access": [
+      "Frontage",
+      "Access Road"
+     ],
+     "one_hot": [
+      "House direction",
+      "Balcony direction",
+      "Legal status",
+      "Furniture state",
+      "City",
+      "District"
+     ],
+     "target_encoded": [
+      "City_District_Ward",
+      "City_Project",
+      "City_District_Street"
+     ],
+     "area_x_location": []
+    },
+    "numeric": "StandardScaler -> SimpleImputer(mean)",
+    "frontage_access": "StandardScaler; giữ giá trị thiếu cho model",
+    "one_hot": "SimpleImputer(most_frequent) -> OneHotEncoder(handle_unknown=ignore)",
+    "target_encoded": "SimpleImputer(constant='__MISSING__') -> TargetEncoder(continuous, smooth=auto, KFold(5, shuffle=True, random_state=42))"
+   },
+   "n_estimators": 683
+  }
+ },
+ "metrics": {
+  "cv_group_3fold": {
+   "MAE": 0.9295460539116674,
+   "RMSE": 1.2603196821373766,
+   "R2": 0.6762569542066447
+  },
+  "validation": {
+   "MAE": 0.8935009463146786,
+   "RMSE": 1.2242525780989832,
+   "R2": 0.685776536279102
+  },
+  "test": {
+   "MAE": 0.9207528179920396,
+   "RMSE": 1.2475048150875896,
+   "R2": 0.6864709706409529
+  },
+  "test_no_address_area_match": {
+   "MAE": 0.9791482293963808,
+   "RMSE": 1.3176109721454405,
+   "R2": 0.6603900884162559
+  }
+ },
+ "acceptance_R2_test_at_least_0_7": false,
+ "previous_model": {
+  "path": "models/candidates/final_v2_2026-10-20",
+  "sha256": "abcde93a531f507e116c4e391c7e2cfead8da5f526e040c1d4c2796f82a016c0",
+  "note": "cùng cấu hình, chia tập ngẫu nhiên theo dòng (splits_v2)"
+ },
+ "versions": {
+  "numpy": "2.5.3",
+  "pandas": "3.0.6",
+  "scikit-learn": "1.9.1",
+  "scipy": "1.18.1",
+  "xgboost": "3.4.1",
+  "lightgbm": "4.7.0",
+  "cloudpickle": "3.1.2"
+ },
+ "prediction_interval": "experiments/group_split/prediction_interval.json"
+}

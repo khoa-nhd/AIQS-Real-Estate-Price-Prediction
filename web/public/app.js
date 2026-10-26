@@ -500,7 +500,7 @@ function head(title, lead) {
 
 function buildAccuracy() {
   const ev = REF.evaluation;
-  const band = REF.interval; // the 80% range (notebook 04)
+  const band = REF.interval; // the 80% range (notebook 05)
   const mae = number(ev.test.MAE, 2, false);
   const median = REF.price.median;
   const candidates = [...REF.candidates.rows].sort((a, b) => a.mean_cv_MAE - b.mean_cv_MAE);
@@ -516,7 +516,7 @@ function buildAccuracy() {
       <section class="panel"><p class="k">${esc(C.TRUST_LABEL)}</p><p class="figure">${esc(t("TRUST_VALUE", { mae }))}</p>
         <p class="p measure">${esc(t("ACC_TEXT", { n: count(ev.testRows), mae, median: price(median), share: percent(ev.test.MAE / median) }))}</p>
         ${band ? `<p class="p measure">${esc(t("ACC_INTERVAL", { n: count(band.testRows), coverage: percent(band.testCoverage), width: number(band.meanWidth, 1, false) }))}</p>` : ""}
-        <p class="small">${esc(t("ACC_NOTE", { twin: percent(ev.twinShare), mae_new: number(ev.testNew.MAE ?? ev.test.MAE, 2, false) }))}</p></section>
+        <p class="small">${esc(t("ACC_NOTE", { new: percent(ev.newShare), mae_new: number(ev.testNew.MAE ?? ev.test.MAE, 2, false) }))}</p></section>
       <section class="panel"><p class="k">${esc(C.EVAL_FINAL_LABEL)}</p><p class="ring-n">${esc(t("EVAL_FINAL_VALUE", { r2: number(ev.test.R2, 3, false) }))}</p>
         <p class="small">${esc(t("EVAL_FINAL_TEXT", { n: count(ev.testRows), verdict }))}</p></section>
     </div>

@@ -76,7 +76,7 @@ class WebModelParity(unittest.TestCase):
 
     def split_rows(self, name: str) -> pd.DataFrame:
         raw = pd.read_csv(ROOT / "data" / "vietnam_housing_dataset.csv", usecols=["Address"])
-        split = pd.read_csv(ROOT / "data" / "processed" / "splits_v2" / f"{name}.csv")
+        split = pd.read_csv(ROOT / "data" / "processed" / "splits_v3" / f"{name}.csv")
         frame = split[self.model.features].copy()
         frame["Address"] = raw["Address"].iloc[split["row_id"].to_numpy()].to_numpy()
         return frame

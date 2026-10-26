@@ -1,0 +1,21 @@
+{
+ "created": "2026-10-26",
+ "source": "notebooks/05_group_split.ipynb, C01",
+ "group_definition": "cùng địa chỉ (NFC, chữ thường, gộp khoảng trắng) và cùng diện tích, và cùng giá hoặc cùng số tầng, phòng ngủ, phòng tắm (khi cả ba đều có); nối bắc cầu (union-find)",
+ "assignment": "mỗi nhóm về tập chứa nhiều tin nhất của nó trong splits_v2; hòa thì chọn ngẫu nhiên (seed 42)",
+ "groups": 25602,
+ "rows_in_multi_listing_groups": 0.24407026365410697,
+ "rows_moved_from_v2": 2345,
+ "rows": {
+  "train": 18880,
+  "validation": 4268,
+  "calibration": 2807,
+  "test": 4274
+ },
+ "sha256": {
+  "train": "8cf8f6e6b0bd4ab7ceb7b7dd1ffb371baf80b8c069c0d72026416be5877f2752",
+  "validation": "60c113da8eb21cf5336293c73c6ddfd06411bae45c9a0a37bf1667aa0d0cd97b",
+  "calibration": "21bbd83d23266d849ecceb2d940b38e9c9debc43b488337b7d8956ccb04009cf",
+  "test": "0f9f4b8d7497d5e3cf78958097d03142114c61f616e52c0803ed43b457a8b6e7"
+ }
+}

@@ -15,7 +15,7 @@ Terms, used the same way everywhere (the audience is the general public, not ML 
 # Working title only. The product name is undecided (brief OD-9).
 TITLE = "Ước tính giá nhà"
 LEAD = (
-    "Nhập thông tin căn nhà để nhận mức giá ước tính từ mô hình. "
+    "Nhập thông tin căn nhà để nhận mức giá ước tính từ mô hình học trên tin rao bán nhà năm 2024. "
     "Đây là con số tham khảo, không phải kết quả thẩm định."
 )
 
@@ -57,8 +57,8 @@ SAMPLE_STATEMENT = (
     "và không phải giá ước tính."
 )
 REAL_STATEMENT = (
-    "Đây là mức giá do mô hình ước tính từ dữ liệu, "
-    "không phải giá thẩm định hay giá giao dịch."
+    "Đây là mức giá do mô hình ước tính từ tin rao bán năm 2024, "
+    "không phải giá thẩm định hay giá giao dịch; giá hiện nay có thể đã khác."
 )
 UNCERTAINTY_LABEL = "Khoảng dao động"
 UNCERTAINTY_NONE = "Chưa có"
@@ -68,13 +68,15 @@ UNCERTAINTY_NONE_TEXT = (
 UNCERTAINTY_INTERVAL = "{low} – {high} tỷ đồng"
 # the range is checked, not promised: the sentence says how often it held on houses the model had not seen
 UNCERTAINTY_INTERVAL_TEXT = (
-    "Khi thử trên {n} căn mô hình chưa từng thấy, giá trong dữ liệu nằm trong khoảng như thế này ở {coverage} số căn."
+    "Khi thử trên {n} căn mô hình chưa từng thấy, giá trong dữ liệu nằm trong khoảng như thế này ở {coverage} số căn. "
+    "Khoảng rộng vì chỉ từ các thông tin đã nhập, mô hình chưa phân biệt được căn đắt và căn rẻ trong khoảng đó: "
+    "dùng nó để nhận ra mức giá quá xa, không dùng để chốt giá."
 )
 RECAP_LABEL = "Thông tin bạn đã nhập"
 
 # Where an estimate sits among the training prices (the strip under the price). Every sentence follows
 # from the training split's min, quartiles and max; nothing here is a claim about the property itself.
-MARKET_LABEL = "So với {n} căn trong dữ liệu"
+MARKET_LABEL = "So với {n} căn trong dữ liệu năm 2024"
 MARKET_SHARE = "Cao hơn giá của {pct} số căn trong dữ liệu."
 MARKET_LOWEST = "Ở mức giá thấp nhất có trong dữ liệu."
 MARKET_OUTSIDE = "Nằm ngoài mức giá có trong dữ liệu (từ {low} đến {high} tỷ đồng), nên không có cơ sở so sánh."
@@ -99,7 +101,7 @@ PROVENANCE_SAMPLE = (
 )
 PROVENANCE_UNKNOWN = "Không có thông tin phiên bản mô hình."
 PROVENANCE_REAL = (
-    "Trung bình của hai mô hình gồm nhiều cây quyết định (XGBoost và LightGBM), khoá ngày {created}, học từ tập huấn luyện. "
+    "Trung bình của hai mô hình gồm nhiều cây quyết định (XGBoost và LightGBM), khoá ngày {created}, học từ tin rao bán năm 2024. "
     "Khi thử một lần trên tập kiểm tra: lệch trung bình {mae} tỷ đồng, R² = {r2}."
 )
 STALE = "Thông tin đã thay đổi sau lần ước tính này. Chọn «Ước tính giá» để cập nhật."
@@ -140,8 +142,9 @@ ACC_TEXT = (
 )
 ACC_NOTE = (
     "Đây là mức trung bình: với từng căn, giá ước tính có thể lệch nhiều hơn hoặc ít hơn. "
-    "Khoảng {twin} số căn thử nghiệm là tin đăng trùng với dữ liệu huấn luyện; "
-    "chỉ tính những căn còn lại, mức lệch trung bình là {mae_new} tỷ đồng."
+    "Các tập được chia theo nhóm tin cùng căn nhà, nên không căn thử nghiệm nào có tin đăng lại trong dữ liệu huấn luyện. "
+    "Riêng {new} số căn không có tin nào cùng địa chỉ và diện tích trong dữ liệu huấn luyện, "
+    "mức lệch trung bình là {mae_new} tỷ đồng."
 )
 ACC_INTERVAL = (
     "Mỗi ước tính đi kèm một khoảng dao động. Trên cùng {n} căn đó, giá trong dữ liệu nằm trong khoảng ở {coverage} "
@@ -152,12 +155,13 @@ EVAL_INTERVAL_HEADING = "Khoảng dao động 80%"
 EVAL_INTERVAL_TEXT = (
     "Học trên {cal} căn của tập hiệu chỉnh (calibration), riêng cho 5 nhóm giá ước tính (split conformal). "
     "Tỷ lệ căn có giá nằm trong khoảng: {val} trên tập kiểm định; {test} trên tập kiểm tra, đo một lần sau khi đã khoá "
-    "cách tính ({test_new} nếu bỏ tin trùng với dữ liệu huấn luyện). Độ rộng trung bình {width} tỷ đồng."
+    "cách tính ({test_new} với các căn không có tin cùng địa chỉ và diện tích trong dữ liệu huấn luyện). "
+    "Độ rộng trung bình {width} tỷ đồng."
 )
 EVAL_FINAL_LABEL = "Đánh giá cuối cùng trên tập kiểm tra"
 EVAL_FINAL_VALUE = "R² = {r2}"
 EVAL_FINAL_TEXT = (
-    "Thử một lần trên {n} căn mô hình chưa từng thấy, sau khi đã chọn xong mô hình. "
+    "Thử trên {n} căn mô hình chưa từng thấy, chia theo nhóm tin cùng căn nhà, sau khi đã chọn xong mô hình. "
     "Mục tiêu của dự án là R² từ 0,7 trở lên: {verdict}"
 )
 EVAL_FINAL_PASS = "đã đạt."
@@ -167,14 +171,14 @@ EVAL_NO_FINAL_TEXT = "Chưa có tệp kết quả đánh giá cuối cùng."
 EVAL_MODEL_HEADING = "Mô hình đang dùng"
 EVAL_MODEL_COLUMNS = ("Lần đo", "MAE (tỷ đồng)", "RMSE (tỷ đồng)", "R²")
 EVAL_MODEL_ROWS = {
-    "cv": "Kiểm định chéo 3 lần trên tập huấn luyện (dùng để chọn)",
+    "cv": "Kiểm định chéo 3 lần theo nhóm tin cùng căn, trên tập huấn luyện",
     "validation": "Tập kiểm định",
-    "test": "Tập kiểm tra (một lần)",
-    "test_new": "Tập kiểm tra, bỏ tin trùng với dữ liệu huấn luyện",
+    "test": "Tập kiểm tra (chia theo nhóm, đánh giá lại)",
+    "test_new": "Tập kiểm tra, chỉ căn không có tin cùng địa chỉ và diện tích trong dữ liệu huấn luyện",
 }
 EVAL_MODEL_SOURCE = (
-    "experiments/final_selection/test_evaluation.json, "
-    "models/candidates/final_v2_2026-10-20/manifest.json, experiments/ensemble_oof/blend_summary.csv"
+    "experiments/group_split/test_evaluation.json, "
+    "models/candidates/final_v3_group_2026-10-26/manifest.json, experiments/group_split/cv_summary.csv"
 )
 EVAL_CV_HEADING = "So sánh các mô hình ứng viên"
 EVAL_CV_KIND = (
@@ -194,7 +198,10 @@ METRIC_HELP = (
 )
 
 # Data and limits view
-DATA_INTRO = "Mô hình học từ một bộ dữ liệu nhà ở tại Việt Nam. Dưới đây là những gì dữ liệu đó có và không có."
+DATA_INTRO = (
+    "Mô hình học từ một bộ tin rao bán nhà ở tại Việt Nam năm 2024. "
+    "Dưới đây là những gì dữ liệu đó có và không có."
+)
 DATA_SOURCE = "Vietnam Housing Dataset 2024"
 DATA_FACTS = {
     "source": "Bộ dữ liệu",
@@ -209,12 +216,14 @@ DATA_HIST_Y = "Số căn"
 DATA_MIDDLE_LABEL = "Một nửa số căn"  # the shaded Q1–Q3 band on the price histogram
 DATA_LIMITS_HEADING = "Giới hạn cần biết"
 DATA_LIMITS = (
+    "Dữ liệu là tin rao bán năm 2024; giá thị trường sau thời điểm đó có thể đã thay đổi.",
     "Giá trong dữ liệu chưa được xác minh là giá rao bán hay giá giao dịch.",
     "Mô hình không có cơ sở để ước tính ngoài khoảng giá có trong dữ liệu.",
     "Kết quả là ước tính của mô hình, không thay cho thẩm định giá.",
     "Danh sách tỉnh, quận trong biểu mẫu chỉ gồm nơi có đủ dữ liệu huấn luyện; "
     "phường, đường và dự án chỉ gồm tên đã xuất hiện trong dữ liệu của quận đó.",
-    "Khoảng một phần mười tin trong dữ liệu là tin đăng trùng, và một số tin có giá hoặc diện tích nghi ghi sai; "
+    "Khoảng một phần mười tin trong dữ liệu là tin đăng lại của cùng căn nhà; khi chia tập, các tin cùng căn được "
+    "giữ chung một tập để đánh giá không bị lạc quan. Một số tin có giá hoặc diện tích nghi ghi sai; "
     "nhóm giữ nguyên các tin này vì chưa xác minh được.",
 )
 DATA_MISSING_HEADING = "Thông tin thường bị thiếu trong dữ liệu"

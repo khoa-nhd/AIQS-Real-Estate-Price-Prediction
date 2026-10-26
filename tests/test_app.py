@@ -17,8 +17,8 @@ from streamlit.testing.v1 import AppTest
 ROOT = Path(__file__).resolve().parents[1]
 APP_DIR = ROOT / "app"
 APP = APP_DIR / "streamlit_app.py"
-MODEL_DIR = ROOT / "models" / "candidates" / "final_v2_2026-10-20"
-INTERVAL = ROOT / "experiments" / "calibration" / "prediction_interval.json"
+MODEL_DIR = ROOT / "models" / "candidates" / "final_v3_group_2026-10-26"
+INTERVAL = ROOT / "experiments" / "group_split" / "prediction_interval.json"
 sys.path.insert(0, str(APP_DIR))
 
 from core import model_interface  # noqa: E402
@@ -78,7 +78,7 @@ class App(unittest.TestCase):
         text = html_text(at)
         self.assertNotIn("Mô hình chưa sẵn sàng", text)
         self.assertEqual(len(at.tabs), 3)
-        self.assertIn("R² = 0,699", text)  # the accuracy tab reads the single test evaluation
+        self.assertIn("R² = 0,686", text)  # the accuracy tab reads the single test evaluation
 
     def test_empty_submit_lists_the_required_fields(self):
         at = self.run_app()
@@ -122,7 +122,7 @@ class App(unittest.TestCase):
         self.assertLessEqual(prediction.price_ty, high)
         self.assertEqual((coverage, rows), (record["test"]["coverage"], record["test"]["rows"]))
         text = html_text(at)
-        self.assertIn("7,4 – 10,3 tỷ đồng", text)  # notebook 04, C07: 7.40 – 10.33
+        self.assertIn("7,6 – 10,4 tỷ đồng", text)  # notebook 05 model: 7.59 – 10.43
         self.assertIn("d1-market-range", text)
         self.assertIn("Khoảng dao động 80%", text)  # the accuracy tab's team details
 

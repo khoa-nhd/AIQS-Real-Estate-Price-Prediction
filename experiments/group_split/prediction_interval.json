@@ -1,0 +1,107 @@
+{
+ "created": "2026-10-26",
+ "notebook": "notebooks/05_group_split.ipynb",
+ "model": {
+  "path": "models/candidates/final_v3_group_2026-10-26/house_price_ensemble.pkl",
+  "sha256": "3d0859cf83ecc588e2b5c0470894d9f411e615587062f2434ce7e34cc6ec5001"
+ },
+ "target_coverage": 0.8,
+ "price_range": [
+  1.0,
+  11.5
+ ],
+ "fit_on": {
+  "split": "data/processed/splits_v3/calibration.csv",
+  "rows": 2807
+ },
+ "method": "grouped",
+ "params": {
+  "method": "grouped",
+  "edges": [
+   4.167582333508062,
+   5.49900804599624,
+   6.538937012095065,
+   7.528008192560458
+  ],
+  "groups": [
+   {
+    "n": 562,
+    "q_lo": -1.1567443388213872,
+    "q_hi": 0.7618755038862979
+   },
+   {
+    "n": 561,
+    "q_lo": -1.343856686023717,
+    "q_hi": 1.4650968965845967
+   },
+   {
+    "n": 561,
+    "q_lo": -1.5040155425146038,
+    "q_hi": 1.6563961151630622
+   },
+   {
+    "n": 560,
+    "q_lo": -1.5180928276089443,
+    "q_hi": 1.9816472664667755
+   },
+   {
+    "n": 563,
+    "q_lo": -1.443228150072124,
+    "q_hi": 1.3987837108152341
+   }
+  ]
+ },
+ "rules": {
+  "interval": "[pred + q_lo, pred + q_hi] theo 5 nhóm giá dự đoán; cắt về price_range; luôn chứa pred",
+  "selection": "phương pháp đã chọn ở notebook 04 (C04), không chọn lại",
+  "coverage_new_listings": "căn không có tin cùng địa chỉ + diện tích trong train"
+ },
+ "validation": {
+  "rows": 4268,
+  "new_listing_share": 0.7813964386129335,
+  "results": {
+   "grouped": {
+    "coverage": 0.8064667291471416,
+    "group_coverage": [
+     0.8215527230590962,
+     0.8038277511961722,
+     0.802439024390244,
+     0.8096774193548387,
+     0.7936507936507936
+    ],
+    "mean_width": 2.846711288317411,
+    "median_width": 2.842011860887358,
+    "coverage_new_listings": 0.7784107946026987
+   },
+   "constant": {
+    "coverage": 0.8050609184629803,
+    "group_coverage": [
+     0.9142526071842411,
+     0.812200956937799,
+     0.7682926829268293,
+     0.7376344086021506,
+     0.796092796092796
+    ],
+    "mean_width": 2.851484396996805,
+    "median_width": 2.8660872423679873,
+    "coverage_new_listings": 0.7787106446776612
+   }
+  }
+ },
+ "test": {
+  "rows": 4274,
+  "new_listing_share": 0.7788956481048198,
+  "coverage": 0.7891904539073468,
+  "group_coverage": [
+   0.8128019323671497,
+   0.7872093023255814,
+   0.7535885167464115,
+   0.8162344983089064,
+   0.7752027809965237
+  ],
+  "mean_width": 2.8479700774685752,
+  "median_width": 2.842011860887358,
+  "coverage_new_listings": 0.764794232502253,
+  "note": "Tập test mới (splits_v3) gần như cùng các dòng với tập test đã dùng ở notebook 03 (C67); đây là lần đánh giá lại theo phản biện, cấu hình không đổi."
+ }
+}

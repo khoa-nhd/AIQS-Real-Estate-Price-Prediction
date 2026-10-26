@@ -18,9 +18,9 @@ import pandas as pd
 import streamlit as st
 
 ROOT = Path(__file__).resolve().parents[2]
-# The final model was trained on splits_v2 (notebook 03, Phần B).
-TRAIN_SPLIT = ROOT / "data" / "processed" / "splits_v2" / "train.csv"
-TRAIN_SPLIT_LABEL = "data/processed/splits_v2/train.csv"
+# The model in use was trained on splits_v3 (split by groups of listings of the same house, notebook 05).
+TRAIN_SPLIT = ROOT / "data" / "processed" / "splits_v3" / "train.csv"
+TRAIN_SPLIT_LABEL = "data/processed/splits_v3/train.csv"
 RAW_DATA = ROOT / "data" / "vietnam_housing_dataset.csv"
 RAW_DATA_LABEL = "data/vietnam_housing_dataset.csv"
 

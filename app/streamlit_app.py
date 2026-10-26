@@ -261,7 +261,7 @@ def evaluation(reference) -> None:
             else:
                 mae, median = final.test["MAE"], reference.price["median"]
                 mae_text = fmt.number(mae, 2, trim=False)
-                note = content.ACC_NOTE.format(twin=fmt.percent(final.twin_share),
+                note = content.ACC_NOTE.format(new=fmt.percent(final.new_share),
                                                mae_new=fmt.number(final.test_new.get("MAE", mae), 2, trim=False))
                 band = load_interval()
                 band_note = (content.ACC_INTERVAL.format(n=fmt.count(band.rows), coverage=fmt.percent(band.coverage),
